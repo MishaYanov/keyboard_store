@@ -1,0 +1,11 @@
+@property --box-shadow-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: hsl(0 0% 75%);
+}
+
+@property --theme {
+    syntax: "light | dark";
+    inherits: true;
+    initial-value: light;
+}
