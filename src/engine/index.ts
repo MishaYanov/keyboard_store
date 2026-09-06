@@ -20,3 +20,4 @@ export * from './rendering/canvas-scheduler';
 export * from './rendering/canvas-viewport';
 export * from './rendering/dom-binding';
 export * from './rendering/render-quality';
+export * from './rendering/webgl-component';

@@ -78,7 +78,7 @@ export class CanvasViewport {
         this.context = context;
         this.createResizeObserver = options.createResizeObserver
             ?? defaultResizeObserverFactory;
-        this.onResize = options.onResize;
+        this.onResize = options.onResize as any;
         this.resolveDpr = options.resolveDpr ?? (() => 1);
     }
 

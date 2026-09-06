@@ -55,7 +55,7 @@ export class CanvasScheduler {
             ?? (handle => cancelAnimationFrame(handle));
         this.onError = options.onError
             ?? ((error): void => reportUnhandledCanvasError(error));
-        this.visibilitySource = options.visibilitySource
+        this.visibilitySource = options.visibilitySource as any
             ?? (typeof document === 'undefined' ? undefined : document);
         this.visibilityListener = (): void => {
             this.handleVisibilityChange();

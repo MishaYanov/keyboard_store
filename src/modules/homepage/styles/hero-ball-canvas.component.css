@@ -1,0 +1,15 @@
+@layer components {
+    @scope ([data-style-scope="hero-ball-canvas"]) {
+        :scope {
+            position: sticky;
+            z-index: 1;
+            top: 0;
+            display: block;
+            width: 100%;
+            height: 30dvh;
+            margin-block-end: -30dvh;
+            background: transparent;
+            pointer-events: none;
+        }
+    }
+}

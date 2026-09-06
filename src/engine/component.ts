@@ -1,14 +1,12 @@
-import {
-    ComponentScope,
-    type ScopeCleanup,
-    type ScopeDisposable,
-} from './component-scope';
-import {
-    ComponentStatus,
-    assertComponentTransition,
-    isMountedComponentStatus,
-    type ComponentStatus as ComponentStatusValue,
-} from './lifecycle';
+import {ComponentScope, type ScopeCleanup, type ScopeDisposable} from './component-scope';
+import { ComponentBuilder } from './component-builder';
+import {ComponentStatus, assertComponentTransition, isMountedComponentStatus, type ComponentStatus as ComponentStatusValue} from './lifecycle';
+
+const STYLE_SCOPE_NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
+
+export interface ComponentOptions {
+    readonly styleScope?: string;
+}
 
 /**
  * Base class for components backed by one HTMLElement.
@@ -19,12 +17,26 @@ import {
 export abstract class Component<TRoot extends HTMLElement = HTMLElement> implements ScopeDisposable {
     protected readonly root: TRoot;
     protected readonly scope = new ComponentScope();
+    protected readonly builder: ComponentBuilder;
 
     private readonly children: Component[] = [];
     private status: ComponentStatusValue = ComponentStatus.Created;
 
-    protected constructor(root: TRoot) {
+    protected constructor(root: TRoot, options: ComponentOptions = {}) {
+        const styleScope = options.styleScope;
+
+        root.setAttribute('data-component-root', '');
+
+        if (styleScope !== undefined) {
+            if (!STYLE_SCOPE_NAME_PATTERN.test(styleScope)) {
+                throw new Error(`Invalid component style scope: ${styleScope}`);
+            }
+
+            root.dataset.styleScope = styleScope;
+        }
+
         this.root = root;
+        this.builder = new ComponentBuilder(this.scope);
     }
 
     public mount(parent: Node, before: Node | null = null): void {
@@ -59,7 +71,11 @@ export abstract class Component<TRoot extends HTMLElement = HTMLElement> impleme
     }
 
     public unmount(): void {
-        if (this.status === ComponentStatus.Created || this.status === ComponentStatus.Unmounting || this.status === ComponentStatus.Unmounted) {
+        if (
+            this.status === ComponentStatus.Created
+            || this.status === ComponentStatus.Unmounting
+            || this.status === ComponentStatus.Unmounted
+        ) {
             return;
         }
 
@@ -144,11 +160,9 @@ export abstract class Component<TRoot extends HTMLElement = HTMLElement> impleme
         return this.scope.own(disposable);
     }
 
-    protected onMount(): void {
-    }
+    protected onMount(): void {}
 
-    protected onUnmount(): void {
-    }
+    protected onUnmount(): void {}
 
     private transitionTo(nextStatus: ComponentStatusValue): void {
         assertComponentTransition(this.status, nextStatus);
