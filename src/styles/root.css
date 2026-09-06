@@ -3,6 +3,9 @@
 @layer theme {
     :root {
         color-scheme: dark;
+        --theme: dark;
+        --color-menu-background: #000000;
+        --color-title-overlap: #111827;
 
         --font-family-body:
                 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -16,6 +19,9 @@
 
     :root[data-theme="light"] {
         color-scheme: light;
+        --theme: light;
+        --color-menu-background: #ffffff;
+        --color-title-overlap: #ffffff;
 
         --color-page-background: #4e8ac9;
         --color-text-primary: #111827;

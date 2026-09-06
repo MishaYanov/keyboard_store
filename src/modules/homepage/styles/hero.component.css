@@ -40,7 +40,7 @@
     }
 
     .hero__title-highlight {
-        color: white;
+        color: var(--color-title-overlap);
         clip-path: var(--ball-overlap, inset(100%));
     }
 

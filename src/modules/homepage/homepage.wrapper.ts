@@ -8,14 +8,14 @@ export class HomepageWrapper extends LayoutComponent {
     private readonly hero: HeroComponent;
 
     public constructor(context: ApplicationContext) {
-        super('homepage');
+        super('homepage', context);
 
         const heroService = new HeroService();
 
         this.hero = new HeroComponent(context, heroService);
     }
 
-    protected override onMount(): void {
+    protected override onLayoutMount(): void {
         this.mountEntry(this.hero);
     }
 }

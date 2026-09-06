@@ -1,13 +1,9 @@
-@container style(--theme: dark) {
-    body {
-        background-color: black;
-        color: white;
-    }
-}
-
-@container style(--theme: light) {
-    body {
-        background-color: black;
-        color: white;
+@layer structure {
+    .router-view,
+    .module-layout,
+    .module-layout__content {
+        min-height: 100%;
+        background-color: var(--color-page-background);
+        color: var(--color-text-primary);
     }
 }

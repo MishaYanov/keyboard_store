@@ -1,0 +1,96 @@
+@scope ([data-style-scope="shared-header"]) {
+    :scope {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 20;
+        color: var(--color-text-primary);
+        background: transparent;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .shared-header__bar {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        min-height: 4rem;
+        padding: 0.5rem max(1rem, env(safe-area-inset-right)) 0.5rem max(1rem, env(safe-area-inset-left));
+    }
+
+    .shared-header__menu-button,
+    .shared-header__close {
+        width: 44px;
+        height: 44px;
+        padding: 10px;
+        border: 0;
+        color: inherit;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .shared-header__menu-button { display: none; }
+    .shared-header__close { font-size: 2rem; line-height: 1; }
+
+    .shared-header__hamburger {
+        display: block;
+        height: 14px;
+        border-top: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        position: relative;
+    }
+
+    .shared-header__hamburger::before {
+        content: '';
+        position: absolute;
+        inset: 4px 0 auto;
+        border-top: 2px solid currentColor;
+    }
+
+    .shared-header__menu {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100dvh;
+        max-width: none;
+        max-height: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: var(--color-menu-background);
+        color: var(--color-text-primary);
+    }
+
+    @media (max-width: 768px) {
+        .shared-header__menu-button { display: block; }
+    }
+
+    .shared-header__themes {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .shared-header__theme {
+        padding: 0.5rem 0.25rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .shared-header__theme[aria-pressed="true"] {
+        text-decoration: underline;
+        text-underline-offset: 0.25em;
+    }
+
+    button:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+}
+
+html:has(.shared-header__menu[open]) {
+    overflow: hidden;
+}

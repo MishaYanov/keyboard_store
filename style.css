@@ -1,4 +1,5 @@
 @import "./src/styles/root.css";
+@import "./src/styles/containers.css";
 
 html,
 body {
