@@ -39,11 +39,7 @@ function smoothStep(progress: number): number {
     return progress * progress * (3 - 2 * progress);
 }
 
-function createPerspectiveMatrix(
-    aspect: number,
-    near: number,
-    far: number,
-): Float32Array {
+function createPerspectiveMatrix(aspect: number, near: number, far: number): Float32Array {
     const focalLength = 1 / Math.tan(FIELD_OF_VIEW_RADIANS / 2);
     const depthRange = far - near;
 
@@ -199,13 +195,14 @@ function requireUniform(context: WebGL2RenderingContext, program: WebGLProgram, 
 }
 
 export class HeroBallCanvasComponent extends WebGlComponent {
-    private readonly applicationContext: ApplicationContext;
-    private readonly scrollSource: HTMLElement;
 
     private resources: SphereResources | null = null;
     private scrollProgress = 0;
 
-    public constructor(context: ApplicationContext, scrollSource: HTMLElement) {
+    public constructor(
+        context: ApplicationContext,
+        private readonly titleHighlight?: HTMLElement,
+    ) {
         super(context, {
             className: 'hero__ball-canvas',
             contextAttributes: {
@@ -217,8 +214,6 @@ export class HeroBallCanvasComponent extends WebGlComponent {
             },
         });
 
-        this.applicationContext = context;
-        this.scrollSource = scrollSource;
 
         this.root.dataset.styleScope = 'hero-ball-canvas';
         this.root.setAttribute('aria-hidden', 'true');
@@ -228,16 +223,9 @@ export class HeroBallCanvasComponent extends WebGlComponent {
         this.createResources();
         this.updateScrollProgress();
 
-        this.applicationContext.eventManager.on(
-            this.scope,
-            this.scrollSource,
-            'scroll',
-            () => {
-                this.updateScrollProgress();
-                this.invalidate();
-            },
-            { capture: true },
-        );
+        const onScroll = () => this.invalidate();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        this.registerCleanup(() => window.removeEventListener('scroll', onScroll));
     }
 
     protected override onWebGlUnmount(): void {
@@ -260,6 +248,7 @@ export class HeroBallCanvasComponent extends WebGlComponent {
         }
 
         const context = frame.context;
+        this.updateScrollProgress();
         const rawProgress = clamp01(this.scrollProgress);
         const progress = frame.quality.animations
             ? smoothStep(rawProgress)
@@ -275,6 +264,7 @@ export class HeroBallCanvasComponent extends WebGlComponent {
         const x = mix(-horizontalExtent, horizontalExtent, progress);
         const y = mix(verticalExtent, -verticalExtent, progress);
         const projection = createPerspectiveMatrix(aspect, 0.1, 100);
+        this.updateTitleHighlight(x, y, depth, frame);
 
         context.clearColor(0, 0, 0, 0);
         context.clearDepth(1);
@@ -304,15 +294,47 @@ export class HeroBallCanvasComponent extends WebGlComponent {
         context.bindVertexArray(null);
     }
 
+    private updateTitleHighlight(x: number, y: number, z: number, frame: WebGlFrame): void {
+        const highlight = this.titleHighlight;
+        if (!highlight) return;
+        const canvasBounds = this.root.getBoundingClientRect();
+        const textBounds = highlight.getBoundingClientRect();
+        const distance = Math.hypot(x, y, z);
+        const factor = 1 - SPHERE_RADIUS ** 2 / distance ** 2;
+        const radius = SPHERE_RADIUS * Math.sqrt(factor);
+        // Project the tangent circle to follow the sphere's perspective silhouette.
+        const horizontal = Math.hypot(x, z);
+        const ux = z / horizontal;
+        const uz = -x / horizontal;
+        const vx = y / distance * uz;
+        const vy = z / distance * ux - x / distance * uz;
+        const vz = -y / distance * ux;
+        const scale = frame.height / (2 * Math.tan(FIELD_OF_VIEW_RADIANS / 2));
+        const points: string[] = [];
+        for (let index = 0; index < 96; index += 1) {
+            const angle = index / 96 * Math.PI * 2;
+            const cosine = Math.cos(angle) * radius;
+            const sine = Math.sin(angle) * radius;
+            const px = x * factor + ux * cosine + vx * sine;
+            const py = y * factor + vy * sine;
+            const pz = z * factor + uz * cosine + vz * sine;
+            const screenX = canvasBounds.left - textBounds.left + frame.width / 2 + scale * px / pz;
+            const screenY = canvasBounds.top - textBounds.top + frame.height / 2 - scale * py / pz;
+            points.push(`${screenX.toFixed(2)}px ${screenY.toFixed(2)}px`);
+        }
+        highlight.style.setProperty('--ball-overlap', `polygon(${points.join(',')})`);
+    }
+
     private updateScrollProgress(): void {
+        const scrollSource = document.scrollingElement ?? document.documentElement;
         const maximumScroll = Math.max(
             0,
-            this.scrollSource.scrollHeight - this.scrollSource.clientHeight,
+            scrollSource.scrollHeight - document.documentElement.clientHeight,
         );
 
         this.scrollProgress = maximumScroll === 0
             ? 0
-            : clamp01(this.scrollSource.scrollTop / maximumScroll);
+            : clamp01(scrollSource.scrollTop / maximumScroll);
     }
 
     private createResources(): void {

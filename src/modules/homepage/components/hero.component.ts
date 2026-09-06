@@ -4,8 +4,7 @@ import {HeroBallCanvasComponent} from './hero-ball-canvas.component';
 import type {HeroService} from '../services/hero.service';
 
 export class HeroComponent extends Component<HTMLElement> {
-    private readonly canvasScroll: HTMLDivElement;
-    private readonly canvasTrack: HTMLDivElement;
+    private readonly canvasStage: HTMLDivElement;
     private readonly ballCanvas: HeroBallCanvasComponent;
 
     public constructor(context: ApplicationContext, service: HeroService) {
@@ -14,9 +13,16 @@ export class HeroComponent extends Component<HTMLElement> {
 
         super(root, { styleScope: 'hero' });
 
+        const titleText = 'Hello';
+
+        const titleHighlight = this.builder.element('span', {
+            className: 'hero__title-highlight',
+            attributes: { 'aria-hidden': 'true' },
+        }, titleText);
+
         const title = this.builder.element('h1', {
             className: 'hero__title',
-        }, 'Hello0000000');
+        }, [this.builder.element('span', {}, titleText), titleHighlight]);
 
         const subTitle = this.builder.element('h3', {
             className: 'hero__subtitle',
@@ -28,51 +34,23 @@ export class HeroComponent extends Component<HTMLElement> {
 
         this.root.appendChild(header);
 
-        const startSnap = this.builder.element('div', {
-            className: 'hero__canvas-snap hero__canvas-snap--start',
-            attributes: {
-                'aria-hidden': 'true',
-            },
-        });
-        const endSnap = this.builder.element('div', {
-            className: 'hero__canvas-snap hero__canvas-snap--end',
-            attributes: {
-                'aria-hidden': 'true',
-            },
-        });
-
-        this.canvasTrack = this.builder.element(
+        this.canvasStage = this.builder.element(
             'div',
             {
-                className: 'hero__canvas-track',
+                className: 'hero__canvas-stage',
             },
-            [startSnap, endSnap],
-        );
-
-        this.canvasScroll = this.builder.element(
-            'div',
-            {
-                className: 'hero__canvas-scroll',
-                attributes: {
-                    'aria-label': 'Scroll to move the 3D sphere',
-                    role: 'region',
-                    tabindex: 0,
-                },
-            },
-            this.canvasTrack,
         );
         this.ballCanvas = new HeroBallCanvasComponent(
             context,
-            this.canvasScroll,
+            titleHighlight,
         );
-        this.root.appendChild(this.canvasScroll);
+        this.root.appendChild(this.canvasStage);
     }
 
     protected override onMount(): void {
         this.attach(
             this.ballCanvas,
-            this.canvasScroll,
-            this.canvasTrack,
+            this.canvasStage,
         );
     }
 }
