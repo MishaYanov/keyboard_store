@@ -1,3 +1,4 @@
+import '../styles/hero-ball-canvas.component.css';
 import {
     type ApplicationContext, WebGlComponent,
     type WebGlFrame,
@@ -219,16 +220,7 @@ export class HeroBallCanvasComponent extends WebGlComponent {
         this.applicationContext = context;
         this.scrollSource = scrollSource;
 
-        Object.assign(this.root.style, {
-            display: 'block',
-            height: '100dvh',
-            marginBottom: '-30dvh',
-            pointerEvents: 'none',
-            position: 'sticky',
-            top: '0',
-            width: '100%',
-            zIndex: '1',
-        });
+        this.root.dataset.styleScope = 'hero-ball-canvas';
         this.root.setAttribute('aria-hidden', 'true');
     }
 

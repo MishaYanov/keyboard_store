@@ -1,30 +1,61 @@
-@layer components {
-    /*
-     * The lower boundary stops these rules before any nested Component root.
-     * Theme custom properties and normal inherited values still cascade.
-     */
-    @scope ([data-style-scope="hero"]) to (:scope [data-component-root]) {
-        .hero__canvas-scroll {
-            position: relative;
-            overflow-x: hidden;
-            overflow-y: auto;
-            height: 30dvh;
-            background: var(--hero-canvas-background, transparent);
-            overscroll-behavior-y: contain;
-            scroll-behavior: smooth;
-            scroll-snap-type: y mandatory;
-            touch-action: pan-y;
-        }
+/*
+ * The lower boundary stops these rules before any nested Component root.
+ * Theme custom properties and normal inherited values still cascade.
+ */
+@scope ([data-style-scope="hero"]) to (:scope [data-component-root]) {
+    :scope {
+        position: relative;
+        isolation: isolate;
+        height: 100dvh;
+        background: var(--hero-canvas-background, white);
+    }
 
-        .hero__canvas-track {
-            position: relative;
-            z-index: 0;
-        }
+    .hero__canvas-scroll {
+        position: relative;
+        z-index: 3;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: 100%;
+        min-height: 0;
+        container-type: size;
+        background: transparent;
+        overscroll-behavior-y: contain;
+        scroll-behavior: smooth;
+        scroll-snap-type: none;
+        touch-action: pan-y;
+    }
 
-        .hero__canvas-snap {
-            height: 30dvh;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-        }
+    .hero__header {
+        position: absolute;
+        top: 30%;
+        left: 10%;
+        right: 10%;
+        /* Keep the children free to stack on either side of the canvas. */
+        z-index: auto;
+        pointer-events: none;
+    }
+    .hero__title {
+        position: relative;
+        z-index: 4;
+        font-size: clamp(2rem, 6vw, 5rem);
+        margin: 0;
+    }
+
+    .hero__subtitle {
+        position: relative;
+        z-index: 2;
+        font-size: clamp(1.25rem, 3vw, 3rem);
+        margin: 1rem 0 0;
+    }
+
+    .hero__canvas-track {
+        position: relative;
+        z-index: 0;
+    }
+
+    .hero__canvas-snap {
+        height: 100cqh;
+        scroll-snap-align: none;
+        scroll-snap-stop: always;
     }
 }

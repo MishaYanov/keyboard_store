@@ -1,3 +1,4 @@
+import '../styles/hero.component.css';
 import {Component, type ApplicationContext} from '../../../engine';
 import {HeroBallCanvasComponent} from './hero-ball-canvas.component';
 import type {HeroService} from '../services/hero.service';
@@ -9,20 +10,28 @@ export class HeroComponent extends Component<HTMLElement> {
 
     public constructor(context: ApplicationContext, service: HeroService) {
         const root = document.createElement('section');
-
         root.className = 'hero';
-        super(root);
 
+        super(root, { styleScope: 'hero' });
+
+        const title = this.builder.element('h1', {
+            className: 'hero__title',
+        }, 'Hello0000000');
+
+        const subTitle = this.builder.element('h3', {
+            className: 'hero__subtitle',
+        }, 'this is the sub title for this hero');
+
+        const header = this.builder.element('header', {
+            className: 'hero__header',
+        }, [title, subTitle]);
+
+        this.root.appendChild(header);
 
         const startSnap = this.builder.element('div', {
             className: 'hero__canvas-snap hero__canvas-snap--start',
             attributes: {
                 'aria-hidden': 'true',
-            },
-            style: {
-                height: '1dvh',
-                scrollSnapAlign: 'start',
-                scrollSnapStop: 'always',
             },
         });
         const endSnap = this.builder.element('div', {
@@ -30,21 +39,12 @@ export class HeroComponent extends Component<HTMLElement> {
             attributes: {
                 'aria-hidden': 'true',
             },
-            style: {
-                height: '100dvh',
-                scrollSnapAlign: 'start',
-                scrollSnapStop: 'always',
-            },
         });
 
         this.canvasTrack = this.builder.element(
             'div',
             {
                 className: 'hero__canvas-track',
-                style: {
-                    position: 'relative',
-                    zIndex: 0,
-                },
             },
             [startSnap, endSnap],
         );
@@ -57,17 +57,6 @@ export class HeroComponent extends Component<HTMLElement> {
                     'aria-label': 'Scroll to move the 3D sphere',
                     role: 'region',
                     tabindex: 0,
-                },
-                style: {
-                    background: 'white',
-                    height: '100dvh',
-                    overflowX: 'hidden',
-                    overflowY: 'auto',
-                    overscrollBehaviorY: 'contain',
-                    position: 'relative',
-                    scrollBehavior: 'smooth',
-                    scrollSnapType: 'y mandatory',
-                    touchAction: 'pan-y',
                 },
             },
             this.canvasTrack,
