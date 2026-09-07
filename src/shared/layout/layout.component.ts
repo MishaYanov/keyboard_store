@@ -1,6 +1,8 @@
 import { Component, type ApplicationContext } from '../../engine';
 import { HeaderComponent } from '../header/components/header.component';
 import { HeaderService } from '../header/services/header.service';
+import { FooterComponent } from '../footer/components/footer.component';
+import type { ILayoutContent } from './layout.types';
 
 /**
  * Shared structural shell for a route-level module.
@@ -12,8 +14,9 @@ import { HeaderService } from '../header/services/header.service';
 export abstract class LayoutComponent extends Component<HTMLElement> {
     protected readonly content: HTMLDivElement;
     private readonly header: HeaderComponent;
+    private readonly footer: FooterComponent;
 
-    protected constructor(moduleName: string, context: ApplicationContext) {
+    protected constructor(moduleName: string, context: ApplicationContext, contentConfig: ILayoutContent) {
         const root = document.createElement('section');
         const content = document.createElement('div');
 
@@ -25,12 +28,14 @@ export abstract class LayoutComponent extends Component<HTMLElement> {
         super(root);
 
         this.content = content;
-        this.header = new HeaderComponent(context, new HeaderService());
+        this.header = new HeaderComponent(context, new HeaderService(contentConfig.header));
+        this.footer = new FooterComponent(contentConfig.footer);
     }
 
     protected override onMount(): void {
         this.attach(this.header, this.root, this.content);
         this.onLayoutMount();
+        this.attach(this.footer);
     }
 
     protected onLayoutMount(): void {}

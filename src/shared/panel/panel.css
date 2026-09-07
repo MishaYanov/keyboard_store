@@ -1,0 +1,70 @@
+/* Stop at projected component roots: slot content owns its internal styles. */
+@scope ([data-style-scope="panel"]) to (:scope [data-component-root]) {
+    :where(:scope,
+    .panel__grid,
+    .panel__text,
+    .panel__content) {
+        /* Reset inherited configuration so each grid region is independent. */
+        --panel-position: initial;
+        --panel-top: initial;
+        --panel-right: initial;
+        --panel-bottom: initial;
+        --panel-left: initial;
+        --panel-z-index: initial;
+        --panel-overflow: initial;
+        --panel-transform: initial;
+        --panel-height: initial;
+        --panel-min-height: initial;
+        --panel-padding: initial;
+        position: var(--panel-position, relative);
+        top: var(--panel-top, auto);
+        right: var(--panel-right, auto);
+        bottom: var(--panel-bottom, auto);
+        left: var(--panel-left, auto);
+        z-index: var(--panel-z-index, auto);
+        overflow: var(--panel-overflow, visible);
+        transform: var(--panel-transform, none);
+        height: var(--panel-height, auto);
+        min-height: var(--panel-min-height, 0);
+        padding: var(--panel-padding, 0);
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    :scope { width: 100%; isolation: isolate; }
+
+    :where(.panel__grid) {
+        display: grid;
+        width: 100%;
+        grid-template-columns: var(--panel-columns, repeat(2, minmax(0, 1fr)));
+        grid-template-rows: var(--panel-rows, auto);
+        grid-template-areas: var(--panel-areas, none);
+        gap: var(--panel-gap, 0);
+        align-items: var(--panel-align-items, stretch);
+    }
+
+    :where(.panel__text,
+    .panel__content) {
+        grid-column: var(--panel-column, auto);
+        grid-row: var(--panel-row, auto);
+        align-self: var(--panel-align-self, stretch);
+        justify-self: var(--panel-justify-self, stretch);
+    }
+
+    .panel__content { isolation: isolate; }
+    .panel__content-slot { position: relative; z-index: 0; min-height: 100%; }
+
+    .panel__mask {
+        display: none;
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: var(--color-menu-background, #000);
+        opacity: var(--panel-mask-opacity, 0.45);
+    }
+
+    :scope[data-layout="mobile"] .panel__mask { display: block; }
+    .panel__mask[data-mode="darken"] { background: #000; }
+    .panel__mask[data-mode="lighten"] { background: #fff; }
+}

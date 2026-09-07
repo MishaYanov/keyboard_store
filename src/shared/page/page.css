@@ -1,0 +1,7 @@
+@scope ([data-style-scope="page"]) {
+    :scope { min-height: 70dvh; padding: 7rem clamp(1.5rem, 8vw, 8rem) 4rem; }
+    h1 { max-width: 20ch; font-size: clamp(2rem, 5vw, 4rem); line-height: 1.1; }
+    p { max-width: 65ch; line-height: 1.7; }
+    nav { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem; }
+    a { color: inherit; text-underline-offset: 0.25em; }
+}

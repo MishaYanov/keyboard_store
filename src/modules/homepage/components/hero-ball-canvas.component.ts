@@ -326,15 +326,15 @@ export class HeroBallCanvasComponent extends WebGlComponent {
     }
 
     private updateScrollProgress(): void {
-        const scrollSource = document.scrollingElement ?? document.documentElement;
+        const bounds = this.root.getBoundingClientRect();
         const maximumScroll = Math.max(
             0,
-            scrollSource.scrollHeight - document.documentElement.clientHeight,
+            bounds.height - document.documentElement.clientHeight,
         );
 
         this.scrollProgress = maximumScroll === 0
             ? 0
-            : clamp01(scrollSource.scrollTop / maximumScroll);
+            : clamp01(-bounds.top / maximumScroll);
     }
 
     private createResources(): void {

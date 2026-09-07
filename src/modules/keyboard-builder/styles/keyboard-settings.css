@@ -1,0 +1,25 @@
+.keyboard-settings { padding: 1.25rem; font-size: 0.85rem; }
+.keyboard-settings__heading { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+.keyboard-settings h2 { font-size: 1rem; margin: 0; }
+.keyboard-settings p { line-height: 1.6; }
+.keyboard-settings fieldset { border: 0; padding: 0; margin: 0 0 1rem; min-width: 0; }
+.keyboard-settings legend { padding: 0; margin-bottom: 0.75rem; font-weight: 600; }
+.keyboard-settings__option { display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.8rem; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); margin-bottom: 0.5rem; cursor: pointer; }
+.keyboard-settings__option:has(input:checked) { background: color-mix(in srgb, currentColor 8%, transparent); border-color: currentColor; }
+.keyboard-settings__option:has(input:disabled):not(:has(input:checked)) { opacity: 0.45; cursor: not-allowed; }
+.keyboard-settings input { accent-color: #7298d1; flex-shrink: 0; margin-top: 0.2rem; }
+.keyboard-settings strong { font-weight: 600; }
+.keyboard-settings small { display: block; line-height: 1.5; margin-top: 0.35rem; }
+.keyboard-settings button { background: transparent; color: inherit; border: 1px solid currentColor; padding: 0.5rem 0.65rem; cursor: pointer; }
+.keyboard-settings__placement { display: grid; gap: 0.75rem; margin: 1rem 0; }
+.keyboard-settings select { max-width: 100%; padding: 0.65rem; color: inherit; background: var(--color-page-background); border: 1px solid currentColor; }
+.keyboard-settings__sample { position: relative; height: 8rem; margin-top: 1rem; border: 1px solid currentColor; border-radius: 0.75rem; }
+.keyboard-settings__sample span { position: absolute; font-size: 0.8rem; }
+.keyboard-settings__sample [data-corner="top-left"] { top: 1rem; left: 1rem; }
+.keyboard-settings__sample [data-corner="top-right"] { top: 1rem; right: 1rem; }
+.keyboard-settings__sample [data-corner="bottom-left"] { bottom: 1rem; left: 1rem; }
+.keyboard-settings__sample [data-corner="bottom-right"] { bottom: 1rem; right: 1rem; }
+.keyboard-settings__swatches { display: flex; gap: 0.5rem; }
+.keyboard-settings__swatches span { width: 3rem; height: 2rem; background: var(--swatch-color); border: 1px solid currentColor; }
+.keyboard-settings input[type="color"] { width: 100%; height: 3rem; padding: 0.2rem; cursor: pointer; }
+.keyboard-engine[data-view="individual-style"] canvas { cursor: crosshair; }

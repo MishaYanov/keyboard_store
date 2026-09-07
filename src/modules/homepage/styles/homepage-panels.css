@@ -1,0 +1,35 @@
+.homepage-panel__text {
+    padding: clamp(1.25rem, 4vw, 4rem);
+}
+
+.homepage-panel__list {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.65;
+    font-size: clamp(0.95rem, 1.2vw, 1.125rem);
+}
+
+.homepage-panel__list li + li { margin-top: 1.25rem; }
+.homepage-panel__list p { margin: 0; }
+
+.homepage-panel__color {
+    height: 100%;
+    min-height: var(--panel-content-height);
+    background: var(--panel-content-color);
+}
+
+
+.homepage-section {
+    width: 100%;
+    min-height: var(--section-height);
+    padding: clamp(1.5rem, 6vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.homepage-section h2,
+.homepage-panel__text h2 { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.15; margin: 0 0 1.25rem; }
+.homepage-section p { max-width: 65ch; line-height: 1.7; margin: 0 0 1.5rem; }
+.homepage-section a { color: inherit; text-underline-offset: 0.25em; }

@@ -1,8 +1,10 @@
 import { signal, type ReadonlySignal } from '../../../engine';
+import type { IHeaderContent } from '../../layout/layout.types';
 
 export type Theme = 'light' | 'dark';
 
 export class HeaderService {
+    public constructor(public readonly content: IHeaderContent) {}
     private readonly menuState = signal(false);
     public readonly menuOpen: ReadonlySignal<boolean> = this.menuState;
     private readonly themeState = signal<Theme>(

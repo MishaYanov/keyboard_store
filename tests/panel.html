@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panel verification</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; }
+        .test-copy { color: white; background: #1239; }
+        .test-visual { height: 320px; background: linear-gradient(120deg, #36c, #fa6); }
+        #results { padding: 1rem; }
+    </style>
+</head>
+<body>
+<div id="fixture"></div>
+<button id="verify">Verify layout</button>
+<button id="dispose">Unmount panel</button>
+<pre id="results"></pre>
+<script type="module" src="./panel.ts"></script>
+</body>
+</html>

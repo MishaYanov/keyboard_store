@@ -3,25 +3,33 @@ import {
     type ApplicationContext,
 } from './engine';
 import { HomepageWrapper } from './modules/homepage/homepage.wrapper';
+import { AboutWrapper } from './modules/about/about.wrapper';
+import { LoginWrapper } from './modules/login/login.wrapper';
+import { BuilderWrapper } from './modules/keyboard-builder/builder.wrapper';
+import { NotFoundWrapper } from './modules/not-found/not-found.wrapper';
 
-export type AppRoute = '';
+export type AppRoute = '' | 'about' | 'login' | 'builder' | 'not-found';
 
 type RouteFactory = (context: ApplicationContext) => Component;
 
 const routes: Readonly<Record<AppRoute, RouteFactory>> = {
     '': context => new HomepageWrapper(context),
+    about: context => new AboutWrapper(context),
+    login: context => new LoginWrapper(context),
+    builder: context => new BuilderWrapper(context),
+    'not-found': context => new NotFoundWrapper(context),
 };
 
 /**
  * Root application component responsible only for route-to-wrapper selection.
  */
-export class Router extends Component<HTMLDivElement> {
+export class Router extends Component {
     private readonly context: ApplicationContext;
     private activeRoute: AppRoute | null = null;
     private activeWrapper: Component | null = null;
 
     public constructor(context: ApplicationContext) {
-        const root = document.createElement('div');
+        const root = document.createElement('main');
 
         root.className = 'router-view';
 
@@ -31,6 +39,12 @@ export class Router extends Component<HTMLDivElement> {
     }
 
     public navigate(route: AppRoute): void {
+        const hash = route === '' ? '#/' : `#/${route}`;
+        if (window.location.hash !== hash) window.history.pushState(null, '', hash);
+        this.renderRoute(route);
+    }
+
+    private renderRoute(route: AppRoute): void {
         if (route === this.activeRoute && this.activeWrapper?.isMounted()) {
             return;
         }
@@ -50,6 +64,13 @@ export class Router extends Component<HTMLDivElement> {
         this.activeWrapper = nextWrapper;
         this.activeRoute = route;
         this.root.dataset.route = route;
+        document.title = `${route === '' ? 'Home' : route === 'not-found' ? 'Page not found' : route[0]!.toUpperCase() + route.slice(1)} | Custom Keycaps`;
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        const heading = nextWrapper.getRoot().querySelector('h1');
+        if (heading) {
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
+        }
     }
 
     public getActiveRoute(): AppRoute | null {
@@ -61,6 +82,17 @@ export class Router extends Component<HTMLDivElement> {
     }
 
     protected override onMount(): void {
-        this.navigate('');
+        const onLocationChange = () => {
+            const path = window.location.hash.replace(/^#\/?/, '').replace(/\/$/, '');
+            const route = Object.prototype.hasOwnProperty.call(routes, path) ? path as AppRoute : 'not-found';
+            this.renderRoute(route);
+        };
+        window.addEventListener('hashchange', onLocationChange);
+        window.addEventListener('popstate', onLocationChange);
+        this.registerCleanup(() => {
+            window.removeEventListener('hashchange', onLocationChange);
+            window.removeEventListener('popstate', onLocationChange);
+        });
+        onLocationChange();
     }
 }

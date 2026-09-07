@@ -1,6 +1,5 @@
-import {signal, type ReadonlySignal, type WritableSignal} from '../../../engine';
+import type { IHeroContent } from '../models/homepage.types';
 
 export class HeroService {
-
-
+    public constructor(public readonly content: IHeroContent) {}
 }

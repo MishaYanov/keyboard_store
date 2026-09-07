@@ -1,0 +1,12 @@
+@scope ([data-style-scope="shared-footer"]) {
+    :scope {
+        width: 100%;
+        min-height: var(--footer-height);
+        padding: clamp(1.5rem, 6vw, 5rem);
+        background: var(--color-page-background);
+        color: var(--color-text-primary);
+    }
+    nav { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.5rem 0 2rem; }
+    a { color: inherit; text-underline-offset: 0.25em; }
+    .shared-footer__notes { max-width: 85ch; font-size: 0.875rem; line-height: 1.6; }
+}

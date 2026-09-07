@@ -13,7 +13,12 @@ export class HeroComponent extends Component<HTMLElement> {
 
         super(root, { styleScope: 'hero' });
 
-        const titleText = 'Hello';
+        const data = service.content;
+        this.root.style.setProperty('--hero-height', data.height);
+        this.root.style.setProperty('--hero-header-top', data.header.top);
+        this.root.style.setProperty('--hero-header-left', data.header.left);
+        this.root.style.setProperty('--hero-header-right', data.header.right);
+        const titleText = data.title;
 
         const titleHighlight = this.builder.element('span', {
             className: 'hero__title-highlight',
@@ -26,7 +31,7 @@ export class HeroComponent extends Component<HTMLElement> {
 
         const subTitle = this.builder.element('h3', {
             className: 'hero__subtitle',
-        }, 'this is the sub title for this hero');
+        }, data.subtitle);
 
         const header = this.builder.element('header', {
             className: 'hero__header',

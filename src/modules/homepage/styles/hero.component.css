@@ -6,7 +6,7 @@
     :scope {
         position: relative;
         isolation: isolate;
-        height: 300dvh;
+        height: var(--hero-height);
         background: var(--hero-canvas-background, white);
     }
 
@@ -20,9 +20,9 @@
 
     .hero__header {
         position: absolute;
-        top: 15%;
-        left: 10%;
-        right: 10%;
+        top: var(--hero-header-top);
+        left: var(--hero-header-left);
+        right: var(--hero-header-right);
         /* Keep the children free to stack on either side of the canvas. */
         z-index: auto;
         pointer-events: none;

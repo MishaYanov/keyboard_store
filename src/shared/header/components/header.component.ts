@@ -16,35 +16,35 @@ export class HeaderComponent extends Component<HTMLElement> {
         this.root.className = 'shared-header';
         this.menuButton = this.builder.element('button', {
             className: 'shared-header__menu-button',
-            attributes: { type: 'button', 'aria-label': 'Open menu', 'aria-expanded': 'false', 'aria-haspopup': 'dialog' },
+            attributes: { type: 'button', 'aria-label': service.content.openMenuLabel, 'aria-expanded': 'false', 'aria-haspopup': 'dialog' },
         }, this.builder.element('span', { className: 'shared-header__hamburger', attributes: { 'aria-hidden': 'true' } }));
         this.closeButton = this.builder.element('button', {
             className: 'shared-header__close',
-            attributes: { type: 'button', 'aria-label': 'Close menu' },
-        }, '×');
+            attributes: { type: 'button', 'aria-label': service.content.closeMenuLabel },
+        }, service.content.closeMenuText);
         this.menu = this.builder.element('dialog', {
             className: 'shared-header__menu',
-            attributes: { 'aria-label': 'Menu' },
+            attributes: { 'aria-label': service.content.menuLabel },
         }, this.createBar(this.closeButton));
         this.root.append(this.createBar(this.menuButton), this.menu);
     }
 
     private createBar(left: HTMLButtonElement): HTMLDivElement {
-        const buttons = (['light', 'dark'] as const).map(theme => [
+        const buttons = this.service.content.themes.map(({ value: theme, label }) => [
             theme,
             this.builder.element('button', {
                 className: 'shared-header__theme',
                 attributes: { type: 'button', 'aria-pressed': String(this.service.theme.get() === theme) },
-            }, theme === 'light' ? 'Light' : 'Dark'),
+            }, label),
         ] as const);
         this.themeButtons.push(...buttons);
-        const separator = this.builder.element('span', {
-            attributes: { 'aria-hidden': 'true' },
-        }, '|');
         const themes = this.builder.element('div', {
             className: 'shared-header__themes',
-            attributes: { role: 'group', 'aria-label': 'Color theme' },
-        }, [buttons[0]![1], separator, buttons[1]![1]]);
+            attributes: { role: 'group', 'aria-label': this.service.content.themeLabel },
+        }, buttons.flatMap(([, button], index) => index === 0 ? [button] : [
+            this.builder.element('span', { attributes: { 'aria-hidden': 'true' } }, this.service.content.separator),
+            button,
+        ]));
         return this.builder.element('div', { className: 'shared-header__bar' }, [
             this.builder.element('div', { className: 'shared-header__left' }, left),
             this.builder.element('div', { attributes: { 'aria-hidden': 'true' } }),
