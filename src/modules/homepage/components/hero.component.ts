@@ -1,13 +1,12 @@
 import '../styles/hero.component.css';
-import {Component, type ApplicationContext} from '../../../engine';
-import {HeroBallCanvasComponent} from './hero-ball-canvas.component';
+import {Component} from '../../../engine';
 import type {HeroService} from '../services/hero.service';
 
 export class HeroComponent extends Component<HTMLElement> {
-    private readonly canvasStage: HTMLDivElement;
-    private readonly ballCanvas: HeroBallCanvasComponent;
+    public readonly titleHighlight: HTMLSpanElement;
+    public readonly motionControl: HTMLButtonElement;
 
-    public constructor(context: ApplicationContext, service: HeroService) {
+    public constructor(service: HeroService) {
         const root = document.createElement('section');
         root.className = 'hero';
 
@@ -24,6 +23,7 @@ export class HeroComponent extends Component<HTMLElement> {
             className: 'hero__title-highlight',
             attributes: { 'aria-hidden': 'true' },
         }, titleText);
+        this.titleHighlight = titleHighlight;
 
         const title = this.builder.element('h1', {
             className: 'hero__title',
@@ -33,30 +33,16 @@ export class HeroComponent extends Component<HTMLElement> {
             className: 'hero__subtitle',
         }, data.subtitle);
 
+        this.motionControl = this.builder.element('button', {
+            className: 'hero__motion-control',
+            attributes: { type: 'button', hidden: true },
+        }, 'Animate keycap');
+
         const header = this.builder.element('header', {
             className: 'hero__header',
-        }, [title, subTitle]);
+        }, [title, subTitle, this.motionControl]);
 
         this.root.appendChild(header);
 
-        this.canvasStage = this.builder.element(
-            'div',
-            {
-                className: 'hero__canvas-stage',
-            },
-        );
-        this.ballCanvas = new HeroBallCanvasComponent(
-            context,
-            titleHighlight,
-        );
-        this.ballCanvas.getRoot().setAttribute('aria-hidden', 'true');
-        this.root.appendChild(this.canvasStage);
-    }
-
-    protected override onMount(): void {
-        this.attach(
-            this.ballCanvas,
-            this.canvasStage,
-        );
     }
 }

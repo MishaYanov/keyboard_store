@@ -83,8 +83,8 @@ export const HOMEPAGE_CONTENT = {
     hero: {
         title: 'Your keyboard. Your character.',
         subtitle: 'Design custom keycaps around your layout, your languages, and the way you type.',
-        height: '300dvh',
-        header: { top: '15%', left: '10%', right: '10%' },
+        height: '120dvh',
+        header: { top: '22%', left: '10%', right: '32%' },
     },
     layout: SITE_CONTENT.layout,
 } satisfies IHomepageContent;
