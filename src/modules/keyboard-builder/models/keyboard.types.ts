@@ -8,6 +8,8 @@ export interface KeyboardDesign {
     letterLayout: LetterLayout;
     languages: readonly LegendLanguage[];
     primaryCorner: 'top-left' | 'top-right';
-    presetId: 'graphite' | 'classic' | 'navy-coral';
+    presetId: 'graphite' | 'classic' | 'navy-coral' | 'custom';
+    customColorMode: 1 | 2 | 3;
+    customColors: { letters: string; actions: string; accent: string };
     keyColors: Readonly<Record<string, string>>;
 }

@@ -9,9 +9,11 @@ export function keyColorId(design: KeyboardDesign, key: PreviewKey): string {
 export function keyColor(design: KeyboardDesign, key: PreviewKey): string {
     const override = design.keyColors[keyColorId(design, key)];
     if (override) return override;
-    const preset = COLOR_PRESETS.find(option => option.id === design.presetId)!;
-    if (/^F[5-8]$/.test(key.label)) return preset.accent;
+    const preset = design.presetId === 'custom' ? design.customColors : COLOR_PRESETS.find(option => option.id === design.presetId)!;
     const alphanumeric = key.row !== undefined || (Array.from(key.label).length === 1 && !'←↑↓→'.includes(key.label));
+    if (design.presetId === 'custom' && design.customColorMode === 1) return preset.letters;
+    if (design.presetId === 'custom' && design.customColorMode === 2) return alphanumeric ? preset.letters : preset.actions;
+    if (/^F[5-8]$/.test(key.label)) return preset.accent;
     return alphanumeric ? preset.letters : preset.actions;
 }
 export function legendColor(background: string): string {

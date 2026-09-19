@@ -1,3 +1,4 @@
+import { reducedMotion } from '../accessibility/accessibility.service';
 import { WebGlComponent, type ApplicationContext, type WebGlFrame } from '../../engine';
 import type { IGridArea, IGridStructure, IGridViewContext } from './grid.types';
 import { fitGridArea } from './grid-projection';
@@ -21,7 +22,7 @@ export class GridCanvasComponent extends WebGlComponent {
     public refresh(area?: IGridArea): void {
         if (!this.isMounted()) return;
         if (!area) { this.invalidate(); return; }
-        const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : this.config.moveDuration ?? 450;
+        const duration = reducedMotion() ? 0 : this.config.moveDuration ?? 450;
         this.movement = { from: { ...this.area }, to: { ...area }, start: performance.now(), duration };
         this.setContinuousAnimation(duration > 0);
         this.invalidate();
@@ -33,8 +34,11 @@ export class GridCanvasComponent extends WebGlComponent {
             if (event.button !== 0 || !this.config.scene.pointer) return;
             const bounds = this.root.getBoundingClientRect();
             if (bounds.width <= 0 || bounds.height <= 0) return;
-            const area = fitGridArea(this.area, bounds.width, bounds.height);
-            this.config.scene.pointer({ x: area.x + (event.clientX - bounds.left) / bounds.width * area.width, y: area.y + (event.clientY - bounds.top) / bounds.height * area.height });
+            const rotated = getComputedStyle(this.root).getPropertyValue('--builder-rotated').trim() === '1';
+            const x = rotated ? (event.clientY - bounds.top) / bounds.height : (event.clientX - bounds.left) / bounds.width;
+            const y = rotated ? (bounds.right - event.clientX) / bounds.width : (event.clientY - bounds.top) / bounds.height;
+            const area = fitGridArea(this.area, this.root.clientWidth, this.root.clientHeight);
+            this.config.scene.pointer({ x: area.x + x * area.width, y: area.y + y * area.height });
         };
         this.root.addEventListener('click', onClick);
         this.registerCleanup(() => this.root.removeEventListener('click', onClick));

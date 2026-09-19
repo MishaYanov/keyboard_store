@@ -1,3 +1,7 @@
+.homepage-panel{
+    margin-bottom: 4rem;
+}
+
 .homepage-panel__text {
     padding: clamp(1.25rem, 4vw, 4rem);
 }
@@ -12,12 +16,28 @@
 .homepage-panel__list li + li { margin-top: 1.25rem; }
 .homepage-panel__list p { margin: 0; }
 
-.homepage-panel__color {
+.homepage-panel__image {
+    display: block;
+    width: 95%;
+    object-fit: cover;
+    object-position: left;
     height: 100%;
     min-height: var(--panel-content-height);
-    background: var(--panel-content-color);
+    max-height: var(--panel-content-height);
+    filter: blur(2px);
+    border-radius: var(--panel-border-radius);
+
+
+    @media (max-width: 768px) {
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 }
 
+.homepage-panel__image:hover {
+    filter: blur(0px);
+}
 
 .homepage-section {
     width: 100%;
@@ -33,3 +53,9 @@
 .homepage-panel__text h2 { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.15; margin: 0 0 1.25rem; }
 .homepage-section p { max-width: 65ch; line-height: 1.7; margin: 0 0 1.5rem; }
 .homepage-section a { color: inherit; text-underline-offset: 0.25em; }
+
+.second-panel {
+    .homepage-panel__image {
+        margin-left: 1rem;
+    }
+}

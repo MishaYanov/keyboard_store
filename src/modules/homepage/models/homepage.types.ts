@@ -4,7 +4,7 @@ import type { ILayoutContent } from '../../../shared/layout/layout.types';
 export interface IHomepagePanel {
     title: string;
     paragraphs: readonly string[];
-    color: string;
+    image: { src: string; alt: string };
     contentHeight: string;
     structure: Omit<IPanelStructure, 'text' | 'content'>;
 }

@@ -74,12 +74,27 @@ export class Application {
         });
         this.scope.own(eventManager);
         this.scope.own(canvasScheduler);
+        this.registerMobileBodyClass();
 
         this.context = Object.freeze({
             canvasScheduler,
             eventManager,
             root,
             scheduler,
+        });
+    }
+
+    private registerMobileBodyClass(): void {
+        const mobile = window.matchMedia('(max-width: 768px)');
+        const updateBodyClass = () => {
+            document.body?.classList.toggle('mobile', mobile.matches);
+        };
+
+        updateBodyClass();
+        mobile.addEventListener('change', updateBodyClass);
+        this.scope.add(() => {
+            mobile.removeEventListener('change', updateBodyClass);
+            document.body?.classList.remove('mobile');
         });
     }
 

@@ -10,6 +10,10 @@ export class BuilderComponent extends Component<HTMLElement> {
         super(document.createElement('article'));
         this.root.className = 'keyboard-builder';
         this.root.append(
+            this.builder.element('a', {
+                className: 'builder-back',
+                attributes: { href: BUILDER_CONTENT.backHref, 'aria-label': BUILDER_CONTENT.backLabel, title: BUILDER_CONTENT.backLabel },
+            }, this.builder.element('span', { attributes: { 'aria-hidden': 'true' } }, '←')),
             this.builder.element('header', {className: 'builder-header'},
                 [
                     this.builder.element('h1', {}, BUILDER_CONTENT.title),

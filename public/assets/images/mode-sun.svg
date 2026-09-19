@@ -1,0 +1,160 @@
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 260 260"
+        width="100%"
+        height="100%"
+>
+    <defs>
+        <mask
+                id="moon-cutter"
+                maskUnits="userSpaceOnUse"
+                x="0"
+                y="0"
+                width="260"
+                height="260"
+        >
+            <rect x="0" y="0" width="260" height="260" fill="#000" />
+
+            <circle
+                    cx="130"
+                    cy="106"
+                    r="23"
+                    fill="#fff"
+            />
+
+            <circle
+                    cx="142"
+                    cy="96"
+                    r="21"
+                    fill="#000"
+            />
+        </mask>
+
+        <!-- Very subtle surface treatment -->
+        <linearGradient
+                id="surface-light"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#fafafa" />
+            <stop offset="100%" stop-color="#e7e7e7" />
+        </linearGradient>
+
+        <linearGradient
+                id="surface-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#262626" />
+            <stop offset="100%" stop-color="#171717" />
+        </linearGradient>
+
+        <linearGradient
+                id="side-light"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#d4d4d4" />
+            <stop offset="100%" stop-color="#a3a3a3" />
+        </linearGradient>
+
+        <linearGradient
+                id="side-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#404040" />
+            <stop offset="100%" stop-color="#171717" />
+        </linearGradient>
+    </defs>
+
+    <style>
+        #key {
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        outline: none;
+        }
+
+        #plunger {
+        transform-box: fill-box;
+        transform-origin: center;
+
+        transition:
+        transform 120ms cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        #key-shadow,
+        #key-side,
+        #key-surface,
+        #moon {
+        transition:
+        fill 180ms ease,
+        stroke 180ms ease,
+        opacity 180ms ease;
+        }
+    </style>
+
+    <g
+            id="key"
+            role="button"
+            tabindex="0"
+            aria-label="Toggle theme"
+    >
+        <g id="plunger">
+
+            <!-- Thin mechanical depth -->
+            <rect
+                    id="key-shadow"
+                    x="48"
+                    y="53"
+                    width="164"
+                    height="158"
+                    rx="16"
+                    fill="#737373"
+                    opacity="0.28"
+            />
+
+            <!-- Side -->
+            <rect
+                    id="key-side"
+                    x="48"
+                    y="39"
+                    width="164"
+                    height="158"
+                    rx="16"
+                    fill="url(#side-light)"
+            />
+
+            <!-- Top -->
+            <rect
+                    id="key-surface"
+                    x="56"
+                    y="43"
+                    width="148"
+                    height="140"
+                    rx="12"
+                    fill="url(#surface-light)"
+                    stroke="#bdbdbd"
+                    stroke-width="1"
+            />
+
+            <!-- Sun legend -->
+            <g fill="none" stroke="#404040" stroke-width="5" stroke-linecap="round" pointer-events="none">
+                <circle cx="130" cy="106" r="13" fill="#404040" stroke="none" />
+                <path d="M130 78v7 M130 127v7 M102 106h7 M151 106h7 M110 86l5 5 M145 121l5 5 M110 126l5-5 M145 91l5-5" />
+            </g>
+
+        </g>
+    </g>
+
+    
+</svg>

@@ -29,7 +29,7 @@ export class HeroComponent extends Component<HTMLElement> {
             className: 'hero__title',
         }, [this.builder.element('span', {}, titleText), titleHighlight]);
 
-        const subTitle = this.builder.element('h3', {
+        const subTitle = this.builder.element('p', {
             className: 'hero__subtitle',
         }, data.subtitle);
 
@@ -49,6 +49,7 @@ export class HeroComponent extends Component<HTMLElement> {
             context,
             titleHighlight,
         );
+        this.ballCanvas.getRoot().setAttribute('aria-hidden', 'true');
         this.root.appendChild(this.canvasStage);
     }
 

@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "towebp": "node scripts/towebp.js"
   },
   "devDependencies": {
     "typescript": "^7.0.2",

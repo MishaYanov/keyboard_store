@@ -6,4 +6,10 @@
         background-color: var(--color-page-background);
         color: var(--color-text-primary);
     }
+
+    @media (min-width: 768px) {
+        .module-layout__content {
+            padding: 0 1rem;
+        }
+    }
 }

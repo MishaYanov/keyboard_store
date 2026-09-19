@@ -21,6 +21,11 @@ export class KeyboardDesignService {
     public swapLanguages(): void { this.state.update(state => ({ ...state, languages: [...state.languages].reverse() })); }
     public selectKey(id: string | null): void { this.selected.set(id); }
     public setPreset(presetId: KeyboardDesign['presetId']): void { this.state.update(state => ({ ...state, presetId })); }
+    public setCustomMode(mode: KeyboardDesign['customColorMode']): void { this.state.update(state => ({ ...state, customColorMode: mode })); }
+    public setCustomColor(role: keyof KeyboardDesign['customColors'], color: string): void {
+        if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+        this.state.update(state => ({ ...state, customColors: { ...state.customColors, [role]: color.toLowerCase() } }));
+    }
     public setKeyColor(color: string): void {
         const id = this.selected.get();
         if (!id || !/^#[0-9a-f]{6}$/i.test(color)) return;

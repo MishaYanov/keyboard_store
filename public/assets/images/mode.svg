@@ -1,0 +1,276 @@
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 260 260"
+        width="100%"
+        height="100%"
+>
+    <defs>
+        <mask
+                id="moon-cutter"
+                maskUnits="userSpaceOnUse"
+                x="0"
+                y="0"
+                width="260"
+                height="260"
+        >
+            <rect x="0" y="0" width="260" height="260" fill="#000" />
+
+            <circle
+                    cx="130"
+                    cy="106"
+                    r="23"
+                    fill="#fff"
+            />
+
+            <circle
+                    cx="142"
+                    cy="96"
+                    r="21"
+                    fill="#000"
+            />
+        </mask>
+
+        <!-- Very subtle surface treatment -->
+        <linearGradient
+                id="surface-light"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#fafafa" />
+            <stop offset="100%" stop-color="#e7e7e7" />
+        </linearGradient>
+
+        <linearGradient
+                id="surface-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#262626" />
+            <stop offset="100%" stop-color="#171717" />
+        </linearGradient>
+
+        <linearGradient
+                id="side-light"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#d4d4d4" />
+            <stop offset="100%" stop-color="#a3a3a3" />
+        </linearGradient>
+
+        <linearGradient
+                id="side-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+        >
+            <stop offset="0%" stop-color="#404040" />
+            <stop offset="100%" stop-color="#171717" />
+        </linearGradient>
+    </defs>
+
+    <style>
+        #key {
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        outline: none;
+        }
+
+        #plunger {
+        transform-box: fill-box;
+        transform-origin: center;
+
+        transition:
+        transform 120ms cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        #key-shadow,
+        #key-side,
+        #key-surface,
+        #moon {
+        transition:
+        fill 180ms ease,
+        stroke 180ms ease,
+        opacity 180ms ease;
+        }
+    </style>
+
+    <g
+            id="key"
+            role="button"
+            tabindex="0"
+            aria-label="Toggle theme"
+    >
+        <g id="plunger">
+
+            <!-- Thin mechanical depth -->
+            <rect
+                    id="key-shadow"
+                    x="48"
+                    y="53"
+                    width="164"
+                    height="158"
+                    rx="16"
+                    fill="#737373"
+                    opacity="0.28"
+            />
+
+            <!-- Side -->
+            <rect
+                    id="key-side"
+                    x="48"
+                    y="39"
+                    width="164"
+                    height="158"
+                    rx="16"
+                    fill="url(#side-light)"
+            />
+
+            <!-- Top -->
+            <rect
+                    id="key-surface"
+                    x="56"
+                    y="43"
+                    width="148"
+                    height="140"
+                    rx="12"
+                    fill="url(#surface-light)"
+                    stroke="#bdbdbd"
+                    stroke-width="1"
+            />
+
+            <!-- Moon -->
+            <circle
+                    id="moon"
+                    cx="130"
+                    cy="106"
+                    r="23"
+                    fill="#404040"
+                    mask="url(#moon-cutter)"
+                    pointer-events="none"
+            />
+
+        </g>
+    </g>
+
+    <script>
+        <![CDATA[
+        (() => {
+            const key = document.getElementById('key');
+            const plunger = document.getElementById('plunger');
+
+            const shadow = document.getElementById('key-shadow');
+            const side = document.getElementById('key-side');
+            const surface = document.getElementById('key-surface');
+            const moon = document.getElementById('moon');
+
+            let dark = false;
+            let releaseTimer = null;
+
+            function applyTheme() {
+                if (dark) {
+                    shadow.setAttribute('fill', '#000000');
+
+                    side.setAttribute(
+                        'fill',
+                        'url(#side-dark)'
+                    );
+
+                    surface.setAttribute(
+                        'fill',
+                        'url(#surface-dark)'
+                    );
+
+                    surface.setAttribute(
+                        'stroke',
+                        '#404040'
+                    );
+
+                    moon.setAttribute(
+                        'fill',
+                        '#fafafa'
+                    );
+
+                    return;
+                }
+
+                shadow.setAttribute(
+                    'fill',
+                    '#737373'
+                );
+
+                side.setAttribute(
+                    'fill',
+                    'url(#side-light)'
+                );
+
+                surface.setAttribute(
+                    'fill',
+                    'url(#surface-light)'
+                );
+
+                surface.setAttribute(
+                    'stroke',
+                    '#bdbdbd'
+                );
+
+                moon.setAttribute(
+                    'fill',
+                    '#404040'
+                );
+            }
+
+            function animatePress() {
+                plunger.style.transform =
+                    'translateY(7px)';
+
+                if (releaseTimer !== null) {
+                    clearTimeout(releaseTimer);
+                }
+
+                releaseTimer = setTimeout(() => {
+                    plunger.style.transform =
+                        'translateY(0)';
+
+                    releaseTimer = null;
+                }, 65);
+            }
+
+            function activate() {
+                dark = !dark;
+
+                applyTheme();
+                animatePress();
+            }
+
+            key.addEventListener(
+                'click',
+                activate
+            );
+
+            key.addEventListener(
+                'keydown',
+                event => {
+                    if (
+                        event.key !== 'Enter' &&
+                        event.key !== ' '
+                    ) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    activate();
+                }
+            );
+        })();
+        ]]>
+    </script>
+</svg>

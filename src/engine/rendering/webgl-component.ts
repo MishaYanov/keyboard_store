@@ -200,9 +200,9 @@ export abstract class WebGlComponent
     }
 
     private refreshViewport(): void {
-        const bounds = this.root.getBoundingClientRect();
-        const width = normalizeDimension(bounds.width);
-        const height = normalizeDimension(bounds.height);
+        // Rendering uses local dimensions, independent of CSS rotation on a parent.
+        const width = normalizeDimension(this.root.clientWidth);
+        const height = normalizeDimension(this.root.clientHeight);
 
         this.quality = this.resolveQuality(width);
 

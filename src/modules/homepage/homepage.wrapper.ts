@@ -41,11 +41,10 @@ export class HomepageWrapper extends LayoutComponent {
             data.paragraphs.map(paragraph => this.builder.element('li', {},
                 this.builder.element('p', {}, paragraph))));
         const text = this.builder.element('div', {}, [this.builder.element('h2', {}, data.title), list]);
-        const content = this.builder.element('div', {
-            className: 'homepage-panel__color',
-            attributes: { 'aria-hidden': 'true' },
+        const content = this.builder.element('img', {
+            className: 'homepage-panel__image',
+            attributes: { src: data.image.src, alt: data.image.alt, loading: 'lazy', decoding: 'async' },
             style: {
-                '--panel-content-color': data.color,
                 '--panel-content-height': data.contentHeight,
             },
         });

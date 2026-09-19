@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: "Geist Mono";
-    src: url("/fonts/GeistMono-VariableFont_wght.ttf") format("truetype");
+    src: url("/public/fonts/GeistMono-VariableFont_wght.ttf") format("truetype");
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -23,6 +23,10 @@
 
         /* Component theme tokens may be overridden by a theme or ancestor. */
         --hero-canvas-background: transparent;
+        --panel-border-radius: 4px;
+
+        --panel-content-height: 60dvh;
+        --section-height: 60dvh;
     }
 
     :root[data-theme="light"] {
@@ -34,6 +38,9 @@
         --color-page-background: white;
         --color-text-primary: #111827;
     }
+
+
+
 }
 
 @layer reset {
@@ -66,7 +73,7 @@
     body {
         background: var(--color-page-background);
         color: var(--color-text-primary);
-        font-family: var(--font-family-body);
+        font-family: var(--font-family-body), sans-serif;
     }
 
     #app {

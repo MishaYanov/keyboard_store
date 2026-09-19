@@ -8,6 +8,7 @@
         isolation: isolate;
         height: var(--hero-height);
         background: var(--hero-canvas-background, white);
+        margin-bottom: 9dvh;
     }
 
     .hero__canvas-stage {

@@ -1,9 +1,11 @@
+import sunIcon from '../../../../public/assets/images/mode-sun.svg?url';
+import modeIcon from '../../../../public/assets/images/mode.svg?url';
 import '../styles/header.component.css';
 import { Component, effect, type ApplicationContext } from '../../../engine';
-import { HeaderService, type Theme } from '../services/header.service';
+import { HeaderService } from '../services/header.service';
 
 export class HeaderComponent extends Component<HTMLElement> {
-    private readonly themeButtons: Array<readonly [Theme, HTMLButtonElement]> = [];
+    private readonly themeButtons: HTMLButtonElement[] = [];
     private readonly menuButton: HTMLButtonElement;
     private readonly closeButton: HTMLButtonElement;
     private readonly menu: HTMLDialogElement;
@@ -25,26 +27,21 @@ export class HeaderComponent extends Component<HTMLElement> {
         this.menu = this.builder.element('dialog', {
             className: 'shared-header__menu',
             attributes: { 'aria-label': service.content.menuLabel },
-        }, this.createBar(this.closeButton));
+        }, [this.createBar(this.closeButton), this.builder.element('nav', {
+            className: 'shared-header__navigation', attributes: { 'aria-label': service.content.navigationLabel },
+        }, service.content.links.map(link => this.builder.element('a', {
+            attributes: { href: link.href, ...(link.href === (window.location.hash || '#/') ? { 'aria-current': 'page' } : {}) },
+        }, link.label)))]);
         this.root.append(this.createBar(this.menuButton), this.menu);
     }
 
     private createBar(left: HTMLButtonElement): HTMLDivElement {
-        const buttons = this.service.content.themes.map(({ value: theme, label }) => [
-            theme,
-            this.builder.element('button', {
-                className: 'shared-header__theme',
-                attributes: { type: 'button', 'aria-pressed': String(this.service.theme.get() === theme) },
-            }, label),
-        ] as const);
-        this.themeButtons.push(...buttons);
-        const themes = this.builder.element('div', {
-            className: 'shared-header__themes',
-            attributes: { role: 'group', 'aria-label': this.service.content.themeLabel },
-        }, buttons.flatMap(([, button], index) => index === 0 ? [button] : [
-            this.builder.element('span', { attributes: { 'aria-hidden': 'true' } }, this.service.content.separator),
-            button,
-        ]));
+        const button = this.builder.element('button', {
+            className: 'shared-header__theme',
+            attributes: { type: 'button', 'aria-label': this.service.content.themeLabel, 'aria-pressed': String(this.service.theme.get() === 'dark') },
+        }, this.builder.element('img', { attributes: { src: modeIcon, alt: '', width: 44, height: 44, 'aria-hidden': 'true' } }));
+        this.themeButtons.push(button);
+        const themes = this.builder.element('div', { className: 'shared-header__themes' }, button);
         return this.builder.element('div', { className: 'shared-header__bar' }, [
             this.builder.element('div', { className: 'shared-header__left' }, left),
             this.builder.element('div', { attributes: { 'aria-hidden': 'true' } }),
@@ -55,10 +52,17 @@ export class HeaderComponent extends Component<HTMLElement> {
     protected override onMount(): void {
         this.context.eventManager.on(this.scope, this.menuButton, 'click', () => this.service.setMenuOpen(true));
         this.context.eventManager.on(this.scope, this.closeButton, 'click', () => this.service.setMenuOpen(false));
+
         const onCancel = (event: Event) => {
             event.preventDefault();
             this.service.setMenuOpen(false);
         };
+
+        const onNavigate = (event: MouseEvent) => {
+            if (event.target instanceof Element && event.target.closest('a[href]')) this.service.setMenuOpen(false);
+        };
+        this.menu.addEventListener('click', onNavigate);
+        this.registerCleanup(() => this.menu.removeEventListener('click', onNavigate));
         this.menu.addEventListener('cancel', onCancel);
         this.registerCleanup(() => this.menu.removeEventListener('cancel', onCancel));
         const desktop = window.matchMedia('(min-width: 769px)');
@@ -72,13 +76,19 @@ export class HeaderComponent extends Component<HTMLElement> {
             if (open && !this.menu.open) this.menu.showModal();
             if (!open && this.menu.open) this.menu.close();
         }, { scheduler: this.context.scheduler }));
-        for (const [theme, button] of this.themeButtons) {
-            this.context.eventManager.on(this.scope, button, 'click', () => this.service.setTheme(theme));
+        for (const button of this.themeButtons) {
+            this.context.eventManager.on(this.scope, button, 'click', () => this.service.setTheme(this.service.theme.get() === 'dark' ? 'light' : 'dark'));
         }
         this.registerCleanup(effect(() => {
             const selected = this.service.theme.get();
-            for (const [theme, button] of this.themeButtons) {
-                button.setAttribute('aria-pressed', String(theme === selected));
+            for (const button of this.themeButtons) {
+                const icon = button.querySelector('img');
+                if (icon) icon.src = selected === 'dark' ? sunIcon : modeIcon;
+                button.dataset.targetTheme = selected === 'dark' ? 'light' : 'dark';
+                const label = selected === 'dark' ? this.service.content.switchToLight : this.service.content.switchToDark;
+                button.setAttribute('aria-label', label);
+                button.setAttribute('title', label);
+                button.removeAttribute('aria-pressed');
             }
         }, { scheduler: this.context.scheduler }));
     }

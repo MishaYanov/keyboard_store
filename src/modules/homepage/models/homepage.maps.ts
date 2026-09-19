@@ -1,3 +1,6 @@
+import keyboardImage from '../../../../public/assets/images/keyboard.jpg?url';
+import keys from '../../../../public/assets/images/keys.jpg?url';
+
 import type { IHomepageContent } from './homepage.types';
 
 import { SITE_CONTENT } from '../../../models/site.maps';
@@ -12,10 +15,10 @@ export const HOMEPAGE_CONTENT = {
                     'Start with your keyboard layout, then explore the keycap shapes, profiles, and colors that suit the way you type. A compact board and a full-size keyboard need different combinations of keys; the design starts with those differences.',
                     'Plan your set around the sizes and positions of your spacebar, modifiers, and Enter key. Layout size alone does not guarantee a fit, so check your board’s key dimensions, switch stems, and stabilizer requirements before ordering.',
                 ],
-                color: '#e8a87c',
+                image: { src: keyboardImage, alt: '' },
                 contentHeight: '60dvh',
                 structure: {
-                    classNames: { root: 'homepage-panel', text: 'homepage-panel__text' },
+                    classNames: { root: 'homepage-panel first-panel', text: 'homepage-panel__text' },
                     desktop: {
                         grid: { minHeight: '60dvh' },
                         text: { gridColumn: '1', alignSelf: 'center' },
@@ -34,10 +37,10 @@ export const HOMEPAGE_CONTENT = {
                     'Design a keyboard that speaks your language. Plan primary and secondary legends for multilingual typing, or create labels for shortcuts and the keys you use most.',
                     'Choose where each legend belongs on the keycap instead of relying on a standard printed layout. Your design can specify custom text placement; supported characters, print areas, and production feasibility must be confirmed before an order is accepted.',
                 ],
-                color: '#7c9ce8',
+                image: { src: keys, alt: '' },
                 contentHeight: '60dvh',
                 structure: {
-                    classNames: { root: 'homepage-panel', text: 'homepage-panel__text' },
+                    classNames: { root: 'homepage-panel second-panel', text: 'homepage-panel__text' },
                     desktop: {
                         grid: { minHeight: '60dvh' },
                         text: { gridColumn: '2', alignSelf: 'center' },

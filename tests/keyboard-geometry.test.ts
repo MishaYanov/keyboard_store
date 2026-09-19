@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { keyboardGeometry } from '../src/modules/keyboard-builder/components/keyboard-interactive-engine/keyboard-geometry.ts';
 
-const base = { size: '100', physical: 'ansi', letterLayout: 'qwerty', languages: ['en'], primaryCorner: 'top-left', presetId: 'classic', keyColors: {} } as const;
+const base = { size: '100', physical: 'ansi', letterLayout: 'qwerty', languages: ['en'], primaryCorner: 'top-left', presetId: 'classic', customColorMode: 2, customColors: { letters: '#e8e2d6', actions: '#899096', accent: '#ee826f' }, keyColors: {} } as const;
 for (const [size, count] of [['100', 104], ['tkl', 87], ['75', 82], ['65', 67], ['60', 63]] as const) {
     const board = keyboardGeometry({ ...base, size });
     assert.equal(board.keys.length, count, `${size} ANSI count`);

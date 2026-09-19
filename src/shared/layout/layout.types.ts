@@ -1,4 +1,8 @@
 export interface IHeaderContent {
+    links: readonly { label: string; href: string }[];
+    navigationLabel: string;
+    switchToLight: string;
+    switchToDark: string;
     themes: readonly { value: 'light' | 'dark'; label: string }[];
     separator: string;
     themeLabel: string;

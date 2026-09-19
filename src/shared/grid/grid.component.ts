@@ -1,3 +1,4 @@
+import { reducedMotion } from '../accessibility/accessibility.service';
 import './grid.css';
 import { Component, type ApplicationContext } from '../../engine';
 import { GridCanvasComponent } from './grid-canvas.component';
@@ -76,7 +77,7 @@ export class GridComponent extends Component<HTMLElement> {
         const selection = ++this.selection;
         this.animation?.cancel();
         this.root.setAttribute('aria-busy', 'true');
-        const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : this.config.fillDuration ?? 320;
+        const duration = reducedMotion() ? 0 : this.config.fillDuration ?? 320;
         const fill = this.buttons[index]!.querySelector<HTMLElement>('.view-grid__fill')!;
         const animation = fill.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration, easing: 'ease-out', fill: 'forwards' });
         this.animation = animation;

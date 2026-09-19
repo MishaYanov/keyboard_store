@@ -29,7 +29,7 @@ export class Router extends Component {
     private activeWrapper: Component | null = null;
 
     public constructor(context: ApplicationContext) {
-        const root = document.createElement('main');
+        const root = document.createElement('div');
 
         root.className = 'router-view';
 

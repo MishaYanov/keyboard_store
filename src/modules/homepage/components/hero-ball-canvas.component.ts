@@ -1,3 +1,4 @@
+import { reducedMotion } from '../../../shared/accessibility/accessibility.service';
 import '../styles/hero-ball-canvas.component.css';
 import {
     type ApplicationContext, WebGlComponent,
@@ -225,6 +226,11 @@ export class HeroBallCanvasComponent extends WebGlComponent {
 
         const onScroll = () => this.invalidate();
         window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('accessibilitychange', onScroll);
+        const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+        motionPreference.addEventListener('change', onScroll);
+        this.registerCleanup(() => motionPreference.removeEventListener('change', onScroll));
+        this.registerCleanup(() => window.removeEventListener('accessibilitychange', onScroll));
         this.registerCleanup(() => window.removeEventListener('scroll', onScroll));
     }
 
@@ -249,7 +255,7 @@ export class HeroBallCanvasComponent extends WebGlComponent {
 
         const context = frame.context;
         this.updateScrollProgress();
-        const rawProgress = clamp01(this.scrollProgress);
+        const rawProgress = reducedMotion() ? 0 : clamp01(this.scrollProgress);
         const progress = frame.quality.animations
             ? smoothStep(rawProgress)
             : rawProgress < 0.5 ? 0 : 1;

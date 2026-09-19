@@ -6,23 +6,29 @@ export interface IPageContent {
     links: readonly { label: string; href: string }[];
 }
 
+export const SITE_LINKS = [
+                { label: 'Home', href: '#/' },
+                { label: 'Builder', href: '#/builder' },
+                { label: 'About', href: '#/about' },
+                { label: 'Login', href: '#/login' },
+            ];
+
 /** Shared site copy. Homepage-specific content lives in homepage.maps.ts. */
 export const SITE_CONTENT = {
     layout: {
         header: {
+            links: SITE_LINKS,
+            navigationLabel: 'Main navigation',
+            switchToLight: 'Switch to light mode',
+            switchToDark: 'Switch to dark mode',
             themes: [{ value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }],
-            separator: '|', themeLabel: 'Color theme', menuLabel: 'Menu',
+            separator: '|', themeLabel: 'Dark mode', menuLabel: 'Menu',
             openMenuLabel: 'Open menu', closeMenuLabel: 'Close menu', closeMenuText: '×',
         },
         footer: {
             height: '50dvh',
             title: 'Made personal, one key at a time.',
-            links: [
-                { label: 'Home', href: '#/' },
-                { label: 'Builder', href: '#/builder' },
-                { label: 'About', href: '#/about' },
-                { label: 'Login', href: '#/login' },
-            ],
+            links: SITE_LINKS,
             disclaimers: [
                 'This site is a product prototype. Account access, checkout, and manufacturing services are not yet available.',
                 'On-screen colors and previews are illustrative. Final materials, print details, compatibility, pricing, and delivery must be confirmed before ordering.',
