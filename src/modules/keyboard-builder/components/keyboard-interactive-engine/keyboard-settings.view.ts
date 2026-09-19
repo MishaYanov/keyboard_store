@@ -7,6 +7,7 @@ import type { KeyboardDesign } from '../../models/keyboard.types';
 import type { KeyboardDesign as KeyboardDesignAlias } from '../../models/keyboard.types';
 import { keyboardGeometry } from './keyboard-geometry';
 import { keyColor, keyColorId } from './key-colors';
+import { CalculatorService } from '../../services/calculator.service';
 
 /** Renders settings from a state snapshot; the wrapper owns events and state changes. */
 export class KeyboardSettingsView {
@@ -46,6 +47,7 @@ export class KeyboardSettingsView {
         if (activeView === 'preset-colors') nodes.push(...this.renderPresets(design));
         if (activeView === 'individual-style') nodes.push(...this.renderIndividual(design, selectedKey));
         if (activeView === 'languages') nodes.push(...this.renderLanguages(design, languageStep));
+        if (activeView === 'finalize') nodes.push(...this.renderFinalize(design));
         this.panel.replaceChildren(...nodes);
         if (focusName === 'letter-layout' && languageStep === 'languages') {
             this.panel.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
@@ -54,6 +56,22 @@ export class KeyboardSettingsView {
         } else if (focusAction && this.panel.isConnected) {
             this.panel.querySelector<HTMLElement>(`[data-action="${CSS.escape(focusAction)}"]`)?.focus({ preventScroll: true });
         }
+    }
+
+    private renderFinalize(design: KeyboardDesign): Node[] {
+        const calculator = new CalculatorService();
+        const quote = calculator.calculate(design);
+        return [
+            this.builder.element('p', {}, 'Your configuration, ready to add to your basket.'),
+            this.builder.element('dl', { className: 'keyboard-settings__price' }, quote.items.flatMap(item => [
+                this.builder.element('dt', {}, `${item.label}${item.quantity !== 1 ? ` × ${item.quantity}` : ''}`),
+                this.builder.element('dd', {}, item.totalCents === 0 ? 'Included' : `${calculator.format(item.totalCents)}${item.quantity > 1 ? ` (${calculator.format(item.unitCents)} each)` : ''}`),
+            ])),
+            this.builder.element('p', { attributes: { role: 'status' } }, `Subtotal: ${calculator.format(quote.totalCents)}`),
+            this.builder.element('p', {}, 'Sample prices in USD. Shipping and tax are not included.'),
+            this.button('Add to basket', 'add-to-basket'),
+            this.builder.element('a', { attributes: { href: '#/checkout' } }, 'View basket'),
+        ];
     }
 
     private renderPresets(design: KeyboardDesign): Node[] {

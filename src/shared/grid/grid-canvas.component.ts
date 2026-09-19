@@ -28,6 +28,10 @@ export class GridCanvasComponent extends WebGlComponent {
         this.invalidate();
     }
 
+    public captureSnapshot(): string | null {
+        return this.config.scene.snapshot?.(this.context) ?? null;
+    }
+
     protected override onWebGlMount(): void {
         this.config.scene.mount(this.context);
         const onClick = (event: MouseEvent) => {

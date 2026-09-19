@@ -10,6 +10,7 @@
     "towebp": "node scripts/towebp.js"
   },
   "devDependencies": {
+    "sharp": "^0.35.4",
     "typescript": "^7.0.2",
     "vite": "8.2.2"
   }

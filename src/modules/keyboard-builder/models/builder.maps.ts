@@ -1,7 +1,7 @@
 export const BUILDER_CONTENT = {
     backLabel: 'Back to home',
     backHref: '#/',
-    title: 'Shape your keyboard.',
+    title: 'Shape your Key Caps.',
     description: 'Choose your layout and printed languages, apply a color scheme, or give individual keys their own colors.',
     gridLabel: 'Keyboard designer views',
     initialArea: { x: -1, y: -1, width: 25, height: 9 },
@@ -12,5 +12,6 @@ export const BUILDER_CONTENT = {
         { id: 'preset-colors', label: 'Colors', description: 'Choose a coordinated color scheme.', area: { x: -1, y: -1, width: 25, height: 9 } },
         { id: 'individual-style', label: 'Style individual', description: 'Select a key and customize its color.', area: { x: -1, y: -1, width: 25, height: 9 } },
         { id: 'keyboard-overview', label: 'Keyboard overview', description: 'Review your current configuration.', area: { x: -1, y: -1, width: 25, height: 9 } },
+        { id: 'finalize', label: 'Finalize', description: 'Review your items and price, then add your keyboard to the basket.', area: { x: -1, y: -1, width: 25, height: 9 } },
     ],
 };

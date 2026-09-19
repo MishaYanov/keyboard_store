@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp'; // [1] Import sharp for image processing
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 
 async function convertJpgToWebp() {
-    const dir = path.resolve(scriptDir, '../public/assets');
-
+    const dir = path.resolve(scriptDir, '../public/assets/images');
+    console.log(dir);
     try {
         const files = await fs.promises.readdir(dir);
         const jpgFiles = files.filter(file => /\.(jpg|jpeg)$/i.test(file));
@@ -16,27 +17,15 @@ async function convertJpgToWebp() {
             return;
         }
 
-        // Dynamic import of native global image components if running in a supported runtime environment
-        // Note: Node 22+ supports the standard web global 'createImageBitmap' and 'Canvas' APIs natively
         for (const file of jpgFiles) {
             const inputPath = path.join(dir, file);
             const outputPath = path.join(dir, `${path.parse(file).name}.webp`);
 
-            const fileBuffer = await fs.promises.readFile(inputPath);
-            const blob = new Blob([fileBuffer], { type: 'image/jpeg' });
+            // Sharp handles reading, converting, and writing efficiently
+            await sharp(inputPath)
+                .webp({ quality: 60, effort: 6 })
+                .toFile(outputPath);
 
-            // Using standard web APIs natively available in modern JS runtimes
-            const imageBitmap = await createImageBitmap(blob);
-
-            // Construct a native canvas structure to export WebP
-            const canvas = new OffscreenCanvas(imageBitmap.width, imageBitmap.height);
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(imageBitmap, 0, 0);
-
-            const webpBlob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.8 });
-            const arrayBuffer = await webpBlob.arrayBuffer();
-
-            await fs.promises.writeFile(outputPath, Buffer.from(arrayBuffer));
             console.log(`Successfully converted: ${file} -> ${path.parse(file).name}.webp`);
         }
 

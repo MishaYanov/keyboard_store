@@ -1,0 +1,15 @@
+@scope (:root) {
+    :scope {
+        --breakpoint-mobile: 768px;
+        --font-family-body: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+        --control-min-size: 44px;
+        --panel-border-radius: 0;
+        --panel-content-height: 60dvh;
+        --section-height: 60dvh;
+        --content-max-width: 92rem;
+        --motion-fast: 160ms;
+        --motion-medium: 320ms;
+        --a11y-color-filter: saturate(1);
+        --a11y-contrast-filter: contrast(1);
+    }
+}

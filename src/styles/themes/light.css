@@ -1,0 +1,19 @@
+@scope (:root[data-theme='light']) {
+    :scope {
+        color-scheme: light;
+        --theme: light;
+        --color-page-background: #ffffff;
+        --color-text-primary: #111827;
+        --color-text-muted: #526076;
+        --color-menu-background: #ffffff;
+        --color-title-overlap: #ffffff;
+        --color-panel-surface: #f2f4f8;
+        --color-card-surface: #f4f6fa;
+        --color-card-order: #eaf0fb;
+        --color-card-account: #f0ebfa;
+        --color-border: #c8ceda;
+        --color-focus: #111827;
+        --color-backdrop: #00000066;
+        --hero-canvas-background: transparent;
+    }
+}

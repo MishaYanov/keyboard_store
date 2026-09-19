@@ -1,14 +1,21 @@
-import sunIcon from '../../../../public/assets/images/mode-sun.svg?url';
-import modeIcon from '../../../../public/assets/images/mode.svg?url';
 import '../styles/header.component.css';
 import { Component, effect, type ApplicationContext } from '../../../engine';
 import { HeaderService } from '../services/header.service';
+import { PerformanceComponent } from '../../performance/performance.component';
+
+const sunIcon = '/assets/images/mode-sun.svg';
+const modeIcon = '/assets/images/mode.svg';
 
 export class HeaderComponent extends Component<HTMLElement> {
     private readonly themeButtons: HTMLButtonElement[] = [];
     private readonly menuButton: HTMLButtonElement;
     private readonly closeButton: HTMLButtonElement;
     private readonly menu: HTMLDialogElement;
+    private readonly performance = new PerformanceComponent();
+    private readonly performanceButton = this.builder.element('button', {
+        className: 'shared-header__performance',
+        attributes: { type: 'button', 'aria-expanded': 'false' },
+    }, 'Performance');
 
     public constructor(
         private readonly context: ApplicationContext,
@@ -16,14 +23,17 @@ export class HeaderComponent extends Component<HTMLElement> {
     ) {
         super(document.createElement('header'), { styleScope: 'shared-header' });
         this.root.className = 'shared-header';
+
         this.menuButton = this.builder.element('button', {
             className: 'shared-header__menu-button',
             attributes: { type: 'button', 'aria-label': service.content.openMenuLabel, 'aria-expanded': 'false', 'aria-haspopup': 'dialog' },
         }, this.builder.element('span', { className: 'shared-header__hamburger', attributes: { 'aria-hidden': 'true' } }));
+
         this.closeButton = this.builder.element('button', {
             className: 'shared-header__close',
             attributes: { type: 'button', 'aria-label': service.content.closeMenuLabel },
         }, service.content.closeMenuText);
+
         this.menu = this.builder.element('dialog', {
             className: 'shared-header__menu',
             attributes: { 'aria-label': service.content.menuLabel },
@@ -43,13 +53,22 @@ export class HeaderComponent extends Component<HTMLElement> {
         this.themeButtons.push(button);
         const themes = this.builder.element('div', { className: 'shared-header__themes' }, button);
         return this.builder.element('div', { className: 'shared-header__bar' }, [
-            this.builder.element('div', { className: 'shared-header__left' }, left),
-            this.builder.element('div', { attributes: { 'aria-hidden': 'true' } }),
+            this.builder.element('div', { className: 'shared-header__left' }, [left,
+                left === this.menuButton ? this.builder.element('a', {
+                    className: 'shared-header__logo', attributes: { href: '#/', 'aria-label': 'Custom Keycaps home' },
+                }, [this.builder.element('span', { className: 'shared-header__logo-mark', attributes: { 'aria-hidden': 'true' } }, 'CK'), 'Custom Keycaps']) : null,
+            ]),
+            left === this.menuButton ? this.builder.element('nav', {
+                className: 'shared-header__desktop-nav', attributes: { 'aria-label': 'Desktop navigation' },
+            }, [this.builder.element('a', { attributes: { href: '#/builder', ...(window.location.hash === '#/builder' ? { 'aria-current': 'page' } : {}) } }, 'Builder'), this.performanceButton])
+                : this.builder.element('div'),
             themes,
         ]);
     }
 
     protected override onMount(): void {
+        this.attach(this.performance, document.body);
+        this.context.eventManager.on(this.scope, this.performanceButton, 'click', () => this.performance.toggle(this.performanceButton));
         this.context.eventManager.on(this.scope, this.menuButton, 'click', () => this.service.setMenuOpen(true));
         this.context.eventManager.on(this.scope, this.closeButton, 'click', () => this.service.setMenuOpen(false));
 

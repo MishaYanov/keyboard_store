@@ -1,5 +1,6 @@
-import keyboardImage from '../../../../public/assets/images/keyboard.jpg?url';
-import keys from '../../../../public/assets/images/keys.jpg?url';
+const keyboardImage = '/assets/images/keyboard.webp';
+const keysImage = '/assets/images/keys.webp';
+const homeImage = '/assets/images/home.webp';
 
 import type { IHomepageContent } from './homepage.types';
 
@@ -16,16 +17,16 @@ export const HOMEPAGE_CONTENT = {
                     'Plan your set around the sizes and positions of your spacebar, modifiers, and Enter key. Layout size alone does not guarantee a fit, so check your board’s key dimensions, switch stems, and stabilizer requirements before ordering.',
                 ],
                 image: { src: keyboardImage, alt: '' },
-                contentHeight: '60dvh',
+                contentHeight: 'var(--homepage-panel-image-height)',
                 structure: {
                     classNames: { root: 'homepage-panel first-panel', text: 'homepage-panel__text' },
                     desktop: {
-                        grid: { minHeight: '60dvh' },
-                        text: { gridColumn: '1', alignSelf: 'center' },
-                        content: { gridColumn: '2' },
+                        grid: { minHeight: 'var(--homepage-panel-min-height)', columns: 'var(--layout-panel-columns)' },
+                        text: { gridColumn: '2 / 7', alignSelf: 'center', zIndex: 2 },
+                        content: { gridColumn: '6 / 12', alignSelf: 'center', zIndex: 1 },
                     },
                     mobile: {
-                        grid: { minHeight: '60dvh' },
+                        grid: { minHeight: 'var(--homepage-panel-min-height)', columns: 'var(--layout-panel-columns)' },
                         text: { alignSelf: 'center' },
                         mask: { mode: 'theme', opacity: 0.72 },
                     },
@@ -37,17 +38,17 @@ export const HOMEPAGE_CONTENT = {
                     'Design a keyboard that speaks your language. Plan primary and secondary legends for multilingual typing, or create labels for shortcuts and the keys you use most.',
                     'Choose where each legend belongs on the keycap instead of relying on a standard printed layout. Your design can specify custom text placement; supported characters, print areas, and production feasibility must be confirmed before an order is accepted.',
                 ],
-                image: { src: keys, alt: '' },
-                contentHeight: '60dvh',
+                image: { src: keysImage, alt: '' },
+                contentHeight: 'var(--homepage-panel-image-height)',
                 structure: {
                     classNames: { root: 'homepage-panel second-panel', text: 'homepage-panel__text' },
                     desktop: {
-                        grid: { minHeight: '60dvh' },
-                        text: { gridColumn: '2', alignSelf: 'center' },
-                        content: { gridColumn: '1' },
+                        grid: { minHeight: 'var(--homepage-panel-min-height)', columns: 'var(--layout-panel-columns)' },
+                        text: { gridColumn: '7 / 12', alignSelf: 'center', zIndex: 2 },
+                        content: { gridColumn: '2 / 8', alignSelf: 'center', zIndex: 1 },
                     },
                     mobile: {
-                        grid: { minHeight: '60dvh' },
+                        grid: { minHeight: 'var(--homepage-panel-min-height)', columns: 'var(--layout-panel-columns)' },
                         text: { alignSelf: 'center' },
                         mask: { mode: 'theme', opacity: 0.72 },
                     },
@@ -55,9 +56,28 @@ export const HOMEPAGE_CONTENT = {
             },
         ],
         sections: [
-            { className: 'homepage-section--1', height: '50dvh', title: 'Build it one key at a time.', text: 'The interactive 3D builder is where your layout, keycap styles, colors, and legends will come together. The planned workflow lets you inspect your keyboard from different angles and refine individual keys before reviewing the complete set. The builder is currently in development.', link: { label: 'Explore the builder', href: '#/builder' } },
-            { className: 'homepage-section--2', height: '50dvh', title: 'From your design to an order.', text: 'Before production, your design needs a final review of key sizes, quantities, legends, and print placement. Pricing, manufacturing availability, processing time, and delivery details must be confirmed before payment. Online ordering is not available in this prototype yet.', link: { label: 'Account access', href: '#/login' } },
-            { className: 'homepage-section--3', height: '50dvh', title: 'Make room for your own ideas.', text: 'We are building a place to turn a keyboard you use every day into something that feels personal. Learn about the project and the thinking behind a more flexible keycap design experience.', link: { label: 'About the project', href: '#/about' } },
+            {
+                className: 'homepage-section--builder',
+                eyebrow: '01 / Create',
+                title: 'Build it one key at a time.',
+                text: 'Shape the layout, colors, and multilingual legends in the interactive builder. Inspect the whole board, then tune individual keys before you commit to a set.',
+                image: { src: homeImage, alt: 'Close-up of a black Home keycap' },
+                link: { label: 'Open the builder', href: '#/builder' },
+            },
+            {
+                className: 'homepage-section--order',
+                eyebrow: '02 / Review',
+                title: 'From design to basket.',
+                text: 'Get a clear price breakdown for the keyboard size, layout, legends, colors, and individual key choices in your configuration.',
+                link: { label: 'View your basket', href: '#/checkout' },
+            },
+            {
+                className: 'homepage-section--account',
+                eyebrow: '03 / Return',
+                title: 'Keep your ideas close.',
+                text: 'Your current design is saved in this browser. Account access will eventually give your designs a permanent home across devices.',
+                link: { label: 'Account access', href: '#/login' },
+            },
         ],
     },
     hero: {

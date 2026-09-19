@@ -1,0 +1,16 @@
+@media (min-width: 769px) {
+    @scope (:root) {
+        :scope {
+            --layout-mode: desktop;
+            --layout-content-padding: 1rem;
+            --layout-page-gutter: clamp(1rem, 4vw, 4rem);
+            --layout-panel-columns: repeat(12, minmax(0, 1fr));
+            --layout-card-columns: repeat(12, minmax(0, 1fr));
+            --layout-section-gap: clamp(1rem, 2vw, 1.75rem);
+            --homepage-panel-max-width: 86rem;
+            --homepage-panel-min-height: 72dvh;
+            --homepage-panel-image-height: 56dvh;
+            --homepage-sections-block-padding: clamp(4rem, 9vw, 9rem);
+        }
+    }
+}

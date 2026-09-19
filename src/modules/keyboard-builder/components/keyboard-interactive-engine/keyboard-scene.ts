@@ -71,6 +71,18 @@ export function createKeyboardScene(getDesign: () => KeyboardDesign, getSelected
         previousSelected = getSelected();
     }
     return {
+        snapshot(gl) {
+            // Reuse the exact keyboard artwork, without camera padding or mobile CSS rotation.
+            update(gl, getDesign());
+            const thumbnail = document.createElement('canvas');
+            thumbnail.width = Math.min(640, surface.width);
+            thumbnail.height = Math.max(1, Math.round(surface.height * thumbnail.width / surface.width));
+            const ctx = thumbnail.getContext('2d');
+            if (!ctx) throw new Error('Unable to capture keyboard preview');
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(surface, 0, 0, thumbnail.width, thumbnail.height);
+            return thumbnail.toDataURL('image/png');
+        },
         mount(gl) {
             const vertex = compile(gl, gl.VERTEX_SHADER, `#version 300 es
                 uniform vec4 u_camera; uniform vec2 u_board; out vec2 uv;

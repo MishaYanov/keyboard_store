@@ -21,7 +21,9 @@ export interface IGridStructure {
     fillDuration?: number;
     moveDuration?: number;
     className?: string;
+    resizablePanel?: boolean;
     scene: {
+        snapshot?: (context: WebGL2RenderingContext) => string;
         pointer?: (point: { x: number; y: number }) => void;
         mount(context: WebGL2RenderingContext): void;
         paint(frame: WebGlFrame, area: Readonly<IGridArea>): void;

@@ -7,9 +7,7 @@
         color: var(--color-text-primary);
     }
 
-    @media (min-width: 768px) {
-        .module-layout__content {
-            padding: 0 1rem;
-        }
+    .module-layout__content {
+        padding-inline: var(--layout-content-padding);
     }
 }

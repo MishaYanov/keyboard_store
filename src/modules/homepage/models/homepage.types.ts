@@ -19,7 +19,14 @@ export interface IHeroContent {
 export interface IHomepageContent {
     homepage: {
         panels: readonly IHomepagePanel[];
-        sections: readonly { className: string; height: string; title: string; text: string; link: { label: string; href: string } }[];
+        sections: readonly {
+            className: string;
+            eyebrow: string;
+            title: string;
+            text: string;
+            image?: { src: string; alt: string };
+            link: { label: string; href: string };
+        }[];
     };
     hero: IHeroContent;
     layout: ILayoutContent;

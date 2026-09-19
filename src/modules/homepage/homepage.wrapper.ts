@@ -20,20 +20,37 @@ export class HomepageWrapper extends LayoutComponent {
 
         this.hero = new HeroComponent(context, heroService);
         this.panels = HOMEPAGE_CONTENT.homepage.panels.map(panel => this.createPanel(panel));
-        this.sections = HOMEPAGE_CONTENT.homepage.sections.map(section => this.builder.element('section', {
+        this.sections = HOMEPAGE_CONTENT.homepage.sections.map((section, index) => this.builder.element('section', {
             className: ['homepage-section', section.className],
-            style: { '--section-height': section.height },
         }, [
-            this.builder.element('h2', {}, section.title),
-            this.builder.element('p', {}, section.text),
-            this.builder.element('a', { attributes: { href: section.link.href } }, section.link.label),
+            section.image ? this.builder.element('div', { className: 'homepage-section__media' },
+                this.builder.element('img', { attributes: { src: section.image.src, alt: section.image.alt, loading: 'lazy', decoding: 'async' } })) : null,
+            this.builder.element('div', { className: 'homepage-section__body' }, [
+                this.builder.element('div', { className: 'homepage-section__meta' }, [
+                    this.builder.element('span', {}, section.eyebrow),
+                    this.builder.element('span', { attributes: { 'aria-hidden': 'true' } }, String(index + 1).padStart(2, '0')),
+                ]),
+                this.builder.element('h2', {}, section.title),
+                this.builder.element('p', {}, section.text),
+                this.builder.element('a', { attributes: { href: section.link.href } }, [section.link.label,
+                    this.builder.element('span', { attributes: { 'aria-hidden': 'true' } }, '↗')]),
+            ]),
         ]));
     }
 
     protected override onLayoutMount(): void {
         this.mountEntry(this.hero);
         for (const panel of this.panels) this.mountEntry(panel);
-        this.content.append(...this.sections);
+        this.content.append(this.builder.element('section', {
+            className: 'homepage-sections',
+            attributes: { 'aria-labelledby': 'homepage-next-title' },
+        }, [
+            this.builder.element('header', { className: 'homepage-sections__header' }, [
+                this.builder.element('p', {}, 'Your next move'),
+                this.builder.element('h2', { attributes: { id: 'homepage-next-title' } }, 'Make it personal. Then make it real.'),
+            ]),
+            ...this.sections,
+        ]));
     }
 
     private createPanel(data: IHomepagePanel): PanelComponent {

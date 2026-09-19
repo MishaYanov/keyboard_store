@@ -9,6 +9,7 @@ export interface IPageContent {
 export const SITE_LINKS = [
                 { label: 'Home', href: '#/' },
                 { label: 'Builder', href: '#/builder' },
+                { label: 'Basket', href: '#/checkout' },
                 { label: 'About', href: '#/about' },
                 { label: 'Login', href: '#/login' },
             ];
@@ -39,7 +40,12 @@ export const SITE_CONTENT = {
     pages: {
         about: {
             title: 'A keyboard should feel like yours.',
-            paragraphs: ['This project explores a more personal way to design keycaps: start with the keyboard you own, then choose the look, languages, and details that make it yours.', 'Our focus is an interactive 3D builder that brings layout planning and custom legends together. The product is still being developed, and the current site introduces the experience we are working toward.'],
+            paragraphs: [
+                'This project explores a more personal way to design keycaps: start with the keyboard you own, then choose the look, languages, and details that make it yours.',
+                'Iv\'e started this project as a fan of keyboards, but as a not native English speaker most of the keyboards I wanted had no support for any other language',
+                'so Iv\'e decided to explore the venue, and build something that can bring me the features I need',
+                'I also combined my love for configs and 3d graphics and the project follows some concepts I want to explore, like how to make a site with minimal footprint and lighting fast while using WebGl, how to combine the reactive states of modern frameworks but remove the bloat'
+            ],
             links: [{ label: 'Explore the builder', href: '#/builder' }, { label: 'Back to home', href: '#/' }],
         },
         login: {

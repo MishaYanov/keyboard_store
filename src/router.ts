@@ -6,9 +6,10 @@ import { HomepageWrapper } from './modules/homepage/homepage.wrapper';
 import { AboutWrapper } from './modules/about/about.wrapper';
 import { LoginWrapper } from './modules/login/login.wrapper';
 import { BuilderWrapper } from './modules/keyboard-builder/builder.wrapper';
+import { CheckoutWrapper } from './modules/checkout/checkout.wrapper';
 import { NotFoundWrapper } from './modules/not-found/not-found.wrapper';
 
-export type AppRoute = '' | 'about' | 'login' | 'builder' | 'not-found';
+export type AppRoute = '' | 'about' | 'login' | 'builder' | 'checkout' | 'not-found';
 
 type RouteFactory = (context: ApplicationContext) => Component;
 
@@ -17,6 +18,7 @@ const routes: Readonly<Record<AppRoute, RouteFactory>> = {
     about: context => new AboutWrapper(context),
     login: context => new LoginWrapper(context),
     builder: context => new BuilderWrapper(context),
+    checkout: context => new CheckoutWrapper(context),
     'not-found': context => new NotFoundWrapper(context),
 };
 

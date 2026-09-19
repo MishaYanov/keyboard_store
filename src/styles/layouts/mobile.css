@@ -1,0 +1,16 @@
+@media (max-width: 768px) {
+    @scope (:root) {
+        :scope {
+            --layout-mode: mobile;
+            --layout-content-padding: 0rem;
+            --layout-page-gutter: 1rem;
+            --layout-panel-columns: minmax(0, 1fr);
+            --layout-card-columns: minmax(0, 1fr);
+            --layout-section-gap: 1rem;
+            --homepage-panel-max-width: calc(100% - 2rem);
+            --homepage-panel-min-height: 68dvh;
+            --homepage-panel-image-height: 56dvh;
+            --homepage-sections-block-padding: 4rem;
+        }
+    }
+}

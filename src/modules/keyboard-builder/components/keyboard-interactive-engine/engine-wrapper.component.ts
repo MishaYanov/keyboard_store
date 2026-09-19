@@ -8,6 +8,7 @@ import { KeyboardSettingsView } from './keyboard-settings.view';
 import type { LanguageStep } from '../../models/settings.maps';
 import { KEYBOARD_OPTIONS } from '../../models/keyboard-options';
 import { KeyboardDesignService } from '../../services/keyboard-design.service';
+import { checkoutService } from '../../../checkout/services/checkout.service';
 import type { KeyboardDesign, KeyboardSize, PhysicalLayout, LetterLayout, LegendLanguage } from '../../models/keyboard.types';
 import '../../styles/keyboard-settings.css';
 
@@ -36,6 +37,7 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
         };
         this.grid = new GridComponent(context, {
             className: 'keyboard-builder-grid',
+            resizablePanel: true,
             label: BUILDER_CONTENT.gridLabel,
             initialArea: BUILDER_CONTENT.initialArea,
             columns: BUILDER_CONTENT.columns.map(column => ({
@@ -88,6 +90,11 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
                 return;
             }
             const action = target.closest<HTMLElement>('[data-action]')?.dataset.action;
+            if (action === 'add-to-basket') {
+                checkoutService.addConfiguration(this.service.design.get(), this.grid.captureSnapshot());
+                window.location.hash = '#/checkout';
+                return;
+            }
             if (action === 'apply-color') {
                 const color = this.panel.querySelector<HTMLInputElement>('[name=key-color-hex]');
                 if (color?.reportValidity()) this.service.setKeyColor(color.value);
@@ -124,5 +131,8 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
 
     private renderPanel(): void {
         this.settings.render(this.activeView, this.languageStep, this.service.design.get(), this.service.selectedKey.get());
+        if (!this.service.storageAvailable.get()) {
+            this.panel.append(this.builder.element('p', { attributes: { role: 'status' } }, 'Browser storage is unavailable or full. Latest design changes will be lost on reload.'));
+        }
     }
 }

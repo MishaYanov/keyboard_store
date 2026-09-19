@@ -3,6 +3,8 @@ import { ACCESSIBILITY_CONTENT as content, defaultPreferences } from './accessib
 import { AccessibilityService } from './accessibility.service';
 import './accessibility.css';
 
+const accessibilityIcon = '/assets/images/accessibility-icon.svg';
+
 export class AccessibilityComponent extends Component<HTMLElement> {
     private readonly service = new AccessibilityService();
 
@@ -14,8 +16,23 @@ export class AccessibilityComponent extends Component<HTMLElement> {
     protected override onMount(): void {
         const trigger = this.builder.element('button', {
             className: 'accessibility-tools__trigger',
-            attributes: { type: 'button', 'aria-haspopup': 'dialog', 'aria-expanded': 'false', 'aria-controls': 'accessibility-dialog' },
-        }, content.title);
+            attributes: {
+                type: 'button',
+                'aria-label': content.title,
+                title: content.title,
+                'aria-haspopup': 'dialog',
+                'aria-expanded': 'false',
+                'aria-controls': 'accessibility-dialog',
+            },
+        }, this.builder.element('img', {
+            attributes: {
+                src: accessibilityIcon,
+                alt: '',
+                width: '24',
+                height: '24',
+                'aria-hidden': 'true',
+            },
+        }));
         const close = this.builder.element('button', { attributes: { type: 'button', autofocus: true } }, content.close);
         const reset = this.builder.element('button', { attributes: { type: 'button' } }, content.reset);
         const controls = content.options.map(option => ({

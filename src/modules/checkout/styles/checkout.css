@@ -1,0 +1,8 @@
+.checkout { max-width: 56rem; margin: 0 auto; padding: 6rem 1rem 3rem; color: var(--color-text-primary); }
+.checkout__item { margin-block: 1.5rem; padding: 1.25rem; border: 1px solid currentColor; border-radius: 0; }
+.checkout__snapshot { display: block; width: min(100%, 20rem); height: auto; margin: 0 auto 1rem 0; border-radius: 0; }
+.checkout li { margin-block: .5rem; overflow-wrap: anywhere; }
+.checkout button, .checkout input { min-height: 44px; padding: .5rem; color: inherit; background: var(--color-page-background); border: 1px solid currentColor; border-radius: 0; }
+.checkout input { width: 5rem; }
+.checkout button { cursor: pointer; }
+.checkout a { color: inherit; }

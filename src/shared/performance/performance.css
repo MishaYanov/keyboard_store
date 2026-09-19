@@ -1,0 +1,22 @@
+.performance-screen {
+    position: fixed; right: 1.5rem; bottom: 5.5rem; z-index: 110;
+    width: min(25rem, calc(100vw - 3rem)); max-height: calc(100dvh - 11rem); overflow: auto;
+    padding: 1.25rem; border: 8px solid #252d28; border-radius: 0;
+    background: repeating-linear-gradient(0deg, #0003 0 1px, transparent 1px 4px), #06140c;
+    color: #9cff91; box-shadow: 0 12px 36px #0008, inset 0 0 32px #70ff6e15;
+    font-family: 'Geist Mono', monospace; text-shadow: 0 0 5px #77ff7766;
+}
+.performance-screen[hidden] { display: none; }
+.performance-screen header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.performance-screen h2 { font-size: 1rem; letter-spacing: .15em; margin: 0; }
+.performance-screen button { min-height: 44px; padding: .4rem .6rem; border: 1px solid #9cff9180; background: #0b2213; color: inherit; font: inherit; cursor: pointer; }
+.performance-screen button:focus-visible { outline: 2px solid #c5ffbd; outline-offset: 3px; }
+.performance-screen__status { font-size: .7rem; letter-spacing: .12em; border-bottom: 1px dashed #9cff9160; padding-bottom: .8rem; }
+.performance-screen dl { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.performance-screen dt { font-size: .65rem; letter-spacing: .06em; }
+.performance-screen dd { margin: .25rem 0 0; font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: .06em; }
+@supports (background-clip: text) {
+    .performance-screen dd { background: radial-gradient(circle, #9cff91 1px, #9cff9155 1.4px, transparent 1.6px) 0 0 / 3px 3px; background-clip: text; color: transparent; text-shadow: none; }
+}
+.performance-screen__note { font-size: .65rem; line-height: 1.6; }
+@media (max-width: 768px) { .performance-screen { display: none; } }

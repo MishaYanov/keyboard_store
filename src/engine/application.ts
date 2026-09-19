@@ -88,13 +88,14 @@ export class Application {
         const mobile = window.matchMedia('(max-width: 768px)');
         const updateBodyClass = () => {
             document.body?.classList.toggle('mobile', mobile.matches);
+            document.body?.classList.toggle('desktop', !mobile.matches);
         };
 
         updateBodyClass();
         mobile.addEventListener('change', updateBodyClass);
         this.scope.add(() => {
             mobile.removeEventListener('change', updateBodyClass);
-            document.body?.classList.remove('mobile');
+            document.body?.classList.remove('mobile', 'desktop');
         });
     }
 

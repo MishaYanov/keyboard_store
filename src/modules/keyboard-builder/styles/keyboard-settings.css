@@ -13,7 +13,7 @@
 .keyboard-settings button { background: transparent; color: inherit; border: 1px solid currentColor; padding: 0.5rem 0.65rem; cursor: pointer; }
 .keyboard-settings__placement { display: grid; gap: 0.75rem; margin: 1rem 0; }
 .keyboard-settings select { max-width: 100%; padding: 0.65rem; color: inherit; background: var(--color-page-background); border: 1px solid currentColor; }
-.keyboard-settings__sample { position: relative; height: 8rem; margin-top: 1rem; border: 1px solid currentColor; border-radius: 0.75rem; }
+.keyboard-settings__sample { position: relative; height: 8rem; margin-top: 1rem; border: 1px solid currentColor; border-radius: 0; }
 .keyboard-settings__sample span { position: absolute; font-size: 0.8rem; }
 .keyboard-settings__sample [data-corner="top-left"] { top: 1rem; left: 1rem; }
 .keyboard-settings__sample [data-corner="top-right"] { top: 1rem; right: 1rem; }
@@ -23,3 +23,8 @@
 .keyboard-settings__swatches span { width: 3rem; height: 2rem; background: var(--swatch-color); border: 1px solid currentColor; }
 .keyboard-settings input[type="color"] { width: 100%; height: 3rem; padding: 0.2rem; cursor: pointer; }
 .keyboard-engine[data-view="individual-style"] canvas { cursor: crosshair; }
+.keyboard-settings__price { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .75rem; }
+.keyboard-settings__price dd { margin: 0; text-align: end; }
+.keyboard-settings__price dt { overflow-wrap: anywhere; }
+.keyboard-settings [data-action="add-to-basket"] { min-height: 44px; font-weight: 600; margin-inline-end: 1rem; }
+.keyboard-settings a { color: inherit; }
