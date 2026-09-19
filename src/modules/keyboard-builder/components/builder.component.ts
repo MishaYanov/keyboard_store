@@ -2,13 +2,19 @@ import {Component, type ApplicationContext} from '../../../engine';
 import {EngineWrapperComponent} from './keyboard-interactive-engine/engine-wrapper.component';
 import {BUILDER_CONTENT} from '../models/builder.maps';
 import '../styles/builder.css';
+import { activeColorAdjustments } from '../../../shared/accessibility/accessibility.service';
 
 export class BuilderComponent extends Component<HTMLElement> {
     private readonly workspace: EngineWrapperComponent;
+    private readonly colorWarning: HTMLParagraphElement;
 
     public constructor(context: ApplicationContext) {
         super(document.createElement('article'));
         this.root.className = 'keyboard-builder';
+        this.colorWarning = this.builder.element('p', {
+            className: 'builder-color-warning',
+            attributes: { role: 'alert', 'aria-live': 'assertive', hidden: true },
+        });
         this.root.append(
             this.builder.element('a', {
                 className: 'builder-back',
@@ -20,11 +26,29 @@ export class BuilderComponent extends Component<HTMLElement> {
                     this.builder.element('p', {}, BUILDER_CONTENT.description),
                 ]
             ),
+            this.colorWarning,
         );
         this.workspace = new EngineWrapperComponent(context);
     }
 
     protected override onMount(): void {
+        const updateColorWarning = () => {
+            const adjustments = activeColorAdjustments();
+            this.colorWarning.hidden = adjustments.length === 0;
+            this.colorWarning.textContent = adjustments.length === 0 ? ''
+                : `Color preview warning: ${adjustments.join(' and ')} ${adjustments.length === 1 ? 'is' : 'are'} active. Your saved key colors are unchanged, but the preview is not color-accurate.`;
+        };
+        const observer = new MutationObserver(updateColorWarning);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-a11y-colors', 'data-a11y-contrast'],
+        });
+        window.addEventListener('accessibilitychange', updateColorWarning);
+        this.registerCleanup(() => {
+            observer.disconnect();
+            window.removeEventListener('accessibilitychange', updateColorWarning);
+        });
+        updateColorWarning();
         this.attach(this.workspace);
     }
 }

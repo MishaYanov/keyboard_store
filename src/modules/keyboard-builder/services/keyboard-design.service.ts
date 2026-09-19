@@ -1,14 +1,15 @@
 import { signal, type ReadonlySignal } from '../../../engine';
 import { KEYBOARD_OPTIONS } from '../models/keyboard-options';
 import type { KeyboardDesign, KeyboardSize, PhysicalLayout, LetterLayout, LegendLanguage } from '../models/keyboard.types';
-import { isKeyboardDesign } from '../models/keyboard-design.validation';
+import { normalizeKeyboardDesign } from '../models/keyboard-design.validation';
 import { readLocalValue, writeLocalValue } from '../../../shared/storage/local-storage';
+import { isKeyboardColor, type KeyboardColor } from '../models/color-palette';
 
 export const KEYBOARD_STORAGE_KEY = 'custom-keycaps:keyboard:v1';
 
 function restoreDesign(): KeyboardDesign {
     const saved = readLocalValue(KEYBOARD_STORAGE_KEY);
-    return isKeyboardDesign(saved) ? saved : structuredClone(KEYBOARD_OPTIONS.initial);
+    return normalizeKeyboardDesign(saved) ?? structuredClone(KEYBOARD_OPTIONS.initial);
 }
 
 export class KeyboardDesignService {
@@ -39,18 +40,40 @@ export class KeyboardDesignService {
     public setPreset(presetId: KeyboardDesign['presetId']): void { this.update(state => ({ ...state, presetId })); }
     public setCustomMode(mode: KeyboardDesign['customColorMode']): void { this.update(state => ({ ...state, customColorMode: mode })); }
     public setCustomColor(role: keyof KeyboardDesign['customColors'], color: string): void {
-        if (!/^#[0-9a-f]{6}$/i.test(color)) return;
-        this.update(state => ({ ...state, customColors: { ...state.customColors, [role]: color.toLowerCase() } }));
+        if (!isKeyboardColor(color)) return;
+        this.update(state => ({ ...state, customColors: { ...state.customColors, [role]: color as KeyboardColor } }));
     }
     public setKeyColor(color: string): void {
         const id = this.selected.get();
-        if (!id || !/^#[0-9a-f]{6}$/i.test(color)) return;
-        this.update(state => ({ ...state, keyColors: { ...state.keyColors, [id]: color.toLowerCase() } }));
+        if (!id || !isKeyboardColor(color)) return;
+        this.update(state => ({ ...state, keyColors: { ...state.keyColors, [id]: color } }));
     }
     public resetKeyColor(): void {
         const id = this.selected.get();
         if (!id) return;
         this.update(state => { const keyColors = { ...state.keyColors }; delete keyColors[id]; return { ...state, keyColors }; });
+    }
+    public setKeyLegend(value: string): void {
+        const id = this.selected.get();
+        if (!id) return;
+        const legend = [...value.trim()].slice(0, 24).join('');
+        this.update(state => {
+            const keyLegends = { ...state.keyLegends };
+            if (legend) keyLegends[id] = legend;
+            else delete keyLegends[id];
+            return { ...state, keyLegends };
+        });
+    }
+    public resetKeyCustomization(): void {
+        const id = this.selected.get();
+        if (!id) return;
+        this.update(state => {
+            const keyColors = { ...state.keyColors };
+            const keyLegends = { ...state.keyLegends };
+            delete keyColors[id];
+            delete keyLegends[id];
+            return { ...state, keyColors, keyLegends };
+        });
     }
     public resetAllColors(): void { this.update(state => ({ ...state, keyColors: {} })); }
 }

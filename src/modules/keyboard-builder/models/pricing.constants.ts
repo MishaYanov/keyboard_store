@@ -9,4 +9,5 @@ export const PRICE_ADJUSTERS = {
     extraLanguage: 1000,
     extraCustomColor: 400,
     individualKey: 150,
+    customLegend: 250,
 } as const;

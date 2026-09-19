@@ -1,7 +1,7 @@
 import { signal, type ReadonlySignal } from '../../../engine';
 import type { KeyboardDesign } from '../../keyboard-builder/models/keyboard.types';
 import { CalculatorService } from '../../keyboard-builder/services/calculator.service';
-import { isKeyboardDesign, isRecord } from '../../keyboard-builder/models/keyboard-design.validation';
+import { isRecord, normalizeKeyboardDesign } from '../../keyboard-builder/models/keyboard-design.validation';
 import { readLocalValue, writeLocalValue } from '../../../shared/storage/local-storage';
 
 export const BASKET_STORAGE_KEY = 'custom-keycaps:basket:v1';
@@ -12,14 +12,18 @@ function restoreBasket(): BasketItem[] {
     const saved = readLocalValue(BASKET_STORAGE_KEY);
     if (!Array.isArray(saved)) return [];
     const ids = new Set<string>();
-    return saved.filter((item): item is BasketItem => {
+    const basket: BasketItem[] = [];
+    for (const item of saved) {
         if (!isRecord(item) || typeof item.id !== 'string' || !item.id || ids.has(item.id)
-            || !isKeyboardDesign(item.design) || typeof item.quantity !== 'number'
+            || typeof item.quantity !== 'number'
             || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99
-            || !(item.snapshot === null || typeof item.snapshot === 'string' && /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(item.snapshot))) return false;
+            || !(item.snapshot === null || typeof item.snapshot === 'string' && /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(item.snapshot))) continue;
+        const design = normalizeKeyboardDesign(item.design);
+        if (!design) continue;
         ids.add(item.id);
-        return true;
-    });
+        basket.push({ id: item.id, design, quantity: item.quantity, snapshot: item.snapshot });
+    }
+    return basket;
 }
 
 /** Browser-persisted basket; configurations are copied when submitted. */

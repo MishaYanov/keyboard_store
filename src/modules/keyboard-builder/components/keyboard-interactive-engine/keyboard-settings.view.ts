@@ -4,7 +4,7 @@ import { SETTINGS_CONTENT, type LanguageStep } from '../../models/settings.maps'
 import { KEYBOARD_OPTIONS } from '../../models/keyboard-options';
 import { COLOR_PRESETS } from '../../models/color-presets';
 import type { KeyboardDesign } from '../../models/keyboard.types';
-import type { KeyboardDesign as KeyboardDesignAlias } from '../../models/keyboard.types';
+import { KEYBOARD_COLOR_PALETTE, type KeyboardColor } from '../../models/color-palette';
 import { keyboardGeometry } from './keyboard-geometry';
 import { keyColor, keyColorId } from './key-colors';
 import { CalculatorService } from '../../services/calculator.service';
@@ -74,6 +74,22 @@ export class KeyboardSettingsView {
         ];
     }
 
+    private palette(name: string, title: string, selected: KeyboardColor): HTMLFieldSetElement {
+        return this.builder.element('fieldset', { className: 'keyboard-settings__palette-field' }, [
+            this.builder.element('legend', {}, title),
+            this.builder.element('div', { className: 'keyboard-settings__palette' }, KEYBOARD_COLOR_PALETTE.map(color =>
+                this.builder.element('label', { className: 'keyboard-settings__color-option', attributes: { title: `${color.label} · ${color.value.toUpperCase()}` } }, [
+                    this.builder.element('input', {
+                        attributes: { type: 'radio', name, value: color.value, 'aria-label': color.label },
+                        properties: { checked: color.value === selected },
+                    }),
+                    this.builder.element('span', { className: 'keyboard-settings__color-swatch', style: { '--swatch-color': color.value } }),
+                    this.builder.element('span', {}, color.label),
+                ]),
+            )),
+        ]);
+    }
+
     private renderPresets(design: KeyboardDesign): Node[] {
         const nodes: Node[] = [];
         nodes.push(this.choices('preset', SETTINGS_CONTENT.colorScheme, COLOR_PRESETS, [design.presetId]));
@@ -88,7 +104,8 @@ export class KeyboardSettingsView {
             nodes.push(this.choices('custom-mode', SETTINGS_CONTENT.customMode, [{ id: '1', label: SETTINGS_CONTENT.customOne }, { id: '2', label: SETTINGS_CONTENT.customTwo }, { id: '3', label: SETTINGS_CONTENT.customThree }], [String(design.customColorMode)]));
             const roles: (keyof KeyboardDesign['customColors'])[] = design.customColorMode === 1 ? ['letters'] : design.customColorMode === 2 ? ['letters', 'actions'] : ['letters', 'actions', 'accent'];
             const labels = { letters: SETTINGS_CONTENT.lettersColor, actions: SETTINGS_CONTENT.actionsColor, accent: SETTINGS_CONTENT.accentColor } as const;
-            for (const role of roles) nodes.push(this.builder.element('label', { className: 'keyboard-settings__placement' }, [labels[role], this.builder.element('input', { attributes: { name: `custom-${role}`, type: 'color' }, properties: { value: design.customColors[role] } })]));
+            nodes.push(this.builder.element('p', {}, SETTINGS_CONTENT.strictPalette));
+            for (const role of roles) nodes.push(this.palette(`custom-${role}`, labels[role], design.customColors[role]));
         }
         nodes.push(this.button(SETTINGS_CONTENT.resetAll, 'reset-colors'));
         return nodes;
@@ -110,16 +127,16 @@ export class KeyboardSettingsView {
             ]),
         ]));
         if (selected) {
+            nodes.push(this.palette('key-color', SETTINGS_CONTENT.colorFor(selected.label), keyColor(design, selected)));
             nodes.push(this.builder.element('label', { className: 'keyboard-settings__placement' }, [
-                SETTINGS_CONTENT.colorFor(selected.label),
-                this.builder.element('input', { attributes: { name: 'key-color', type: 'color' }, properties: { value: keyColor(design, selected) } }),
+                SETTINGS_CONTENT.legendFor(selected.label),
+                this.builder.element('input', {
+                    attributes: { name: 'key-legend', type: 'text', maxlength: 24, spellcheck: 'false', 'aria-describedby': 'key-legend-help' },
+                    properties: { value: design.keyLegends[selectedKey!] ?? selected.label },
+                }),
             ]));
-            nodes.push(this.builder.element('p', { attributes: { role: 'status' } }, `${selected.label}: ${keyColor(design, selected).toUpperCase()}`));
-            nodes.push(this.builder.element('label', { className: 'keyboard-settings__placement' }, [
-                SETTINGS_CONTENT.hexColor,
-                this.builder.element('input', { attributes: { name: 'key-color-hex', type: 'text', pattern: '#[0-9a-fA-F]{6}', maxlength: 7, spellcheck: 'false', title: SETTINGS_CONTENT.hexHelp }, properties: { value: keyColor(design, selected) } }),
-            ]));
-            nodes.push(this.button(SETTINGS_CONTENT.applyColor, 'apply-color'));
+            nodes.push(this.builder.element('small', { attributes: { id: 'key-legend-help' } }, SETTINGS_CONTENT.legendHelp));
+            nodes.push(this.button(SETTINGS_CONTENT.applyLegend, 'apply-legend'));
             nodes.push(this.button(SETTINGS_CONTENT.resetKey, 'reset-key'));
         }
         return nodes;

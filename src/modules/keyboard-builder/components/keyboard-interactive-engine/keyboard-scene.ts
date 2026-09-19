@@ -40,6 +40,7 @@ export function createKeyboardScene(getDesign: () => KeyboardDesign, getSelected
         paint.scale(unit, unit);
         paint.fillStyle = '#1e2636'; paint.fillRect(0, 0, width, height);
         for (const key of geometry.keys) {
+            const id = keyColorId(design, key);
             const x = key.x + 0.35, y = key.y + 0.35, w = key.width - 0.1, h = key.height - 0.1;
             const background = keyColor(design, key);
             paint.fillStyle = background;
@@ -48,11 +49,15 @@ export function createKeyboardScene(getDesign: () => KeyboardDesign, getSelected
                 paint.moveTo(x,y); paint.lineTo(x+w,y); paint.lineTo(x+w,y+h); paint.lineTo(x+0.25,y+h); paint.lineTo(x+0.25,y+0.95); paint.lineTo(x,y+0.95); paint.closePath();
             } else paint.roundRect(x, y, w, h, 0.07);
             paint.fill();
-            if (keyColorId(design, key) === getSelected()) {
+            if (id === getSelected()) {
                 paint.strokeStyle = '#ffb900'; paint.lineWidth = 0.075; paint.stroke();
             }
             paint.fillStyle = legendColor(background);
-            if (key.row !== undefined) {
+            const customLegend = design.keyLegends[id];
+            if (customLegend) {
+                paint.textAlign = 'center'; paint.textBaseline = 'middle'; paint.font = '500 0.21px "Geist Mono", sans-serif';
+                paint.fillText(customLegend, x+w/2, y+h/2, w-0.16);
+            } else if (key.row !== undefined) {
                 design.languages.forEach((language, index) => {
                     const left = index === 0 ? design.primaryCorner === 'top-left' : design.primaryCorner !== 'top-left';
                     paint.textAlign = left ? 'left' : 'right'; paint.textBaseline = index === 0 ? 'top' : 'bottom';

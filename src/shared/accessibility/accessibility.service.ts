@@ -5,6 +5,21 @@ export function reducedMotion(): boolean {
     return document.documentElement.dataset.a11yMotion === 'true' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+export function activeColorAdjustments(): readonly string[] {
+    const root = document.documentElement.dataset;
+    const adjustments: string[] = [];
+    const colorMode = root.a11yColors ?? 'normal';
+    const colorLabels: Readonly<Record<string, string>> = {
+        grayscale: 'grayscale',
+        muted: 'reduced saturation',
+        inverted: 'inverted colors',
+    };
+    const colorLabel = colorLabels[colorMode];
+    if (colorLabel) adjustments.push(colorLabel);
+    if (root.a11yContrast === 'true') adjustments.push('increased contrast');
+    return adjustments;
+}
+
 export class AccessibilityService {
     public preferences: AccessibilityPreferences = defaultPreferences();
 

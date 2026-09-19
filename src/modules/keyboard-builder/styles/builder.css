@@ -1,6 +1,15 @@
 .keyboard-builder { padding: 6rem clamp(1rem, 4vw, 4rem) 3rem; }
 .builder-back { display: none; }
 .keyboard-engine > p { min-height: 3em; line-height: 1.5; }
+.builder-color-warning {
+    margin: 0 0 1rem;
+    padding: .75rem 1rem;
+    border-left: 3px solid currentColor;
+    background: var(--color-card-order);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+}
+.builder-color-warning[hidden] { display: none; }
 @media (max-width: 768px), (max-height: 500px) and (pointer: coarse) {
     html:has(.module-layout--builder) { overflow: hidden; }
     .keyboard-builder {
@@ -13,6 +22,7 @@
     }
     .keyboard-builder .keyboard-engine { flex: 1; min-height: 0; display: flex; flex-direction: column; }
     .keyboard-builder .builder-back { flex-shrink: 0; }
+    .keyboard-builder .builder-color-warning { flex-shrink: 0; margin-bottom: .5rem; padding: .5rem .75rem; font-size: .8rem; }
     .builder-back { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: .5rem; color: inherit; font-size: 2rem; text-decoration: none; }
     .module-layout--builder > .shared-header, .module-layout--builder > footer { display: none; }
     .keyboard-builder .builder-header p { display: none; }

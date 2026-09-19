@@ -75,9 +75,6 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
                 case 'custom-actions': this.service.setCustomColor('actions', input.value); break;
                 case 'custom-accent': this.service.setCustomColor('accent', input.value); break;
                 case 'selected-key': this.service.selectKey(input.value || null); break;
-                case 'key-color-hex':
-                    if (input instanceof HTMLInputElement && !input.reportValidity()) return;
-                    this.service.setKeyColor(input.value); break;
                 case 'key-color': this.service.setKeyColor(input.value); break;
             }
         });
@@ -95,14 +92,14 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
                 window.location.hash = '#/checkout';
                 return;
             }
-            if (action === 'apply-color') {
-                const color = this.panel.querySelector<HTMLInputElement>('[name=key-color-hex]');
-                if (color?.reportValidity()) this.service.setKeyColor(color.value);
+            if (action === 'apply-legend') {
+                const legend = this.panel.querySelector<HTMLInputElement>('[name=key-legend]');
+                if (legend) this.service.setKeyLegend(legend.value);
                 return;
             }
             if (action === 'close') { this.grid.setPanel(null); return; }
             if (action === 'swap') { this.service.swapLanguages(); return; }
-            if (action === 'reset-key') { this.service.resetKeyColor(); return; }
+            if (action === 'reset-key') { this.service.resetKeyCustomization(); return; }
             if (action === 'reset-colors') { this.service.resetAllColors(); return; }
             if (action === 'languages' || action === 'layout') {
                 this.languageStep = action;

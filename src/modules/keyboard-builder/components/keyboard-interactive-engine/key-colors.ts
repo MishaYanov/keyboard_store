@@ -1,12 +1,13 @@
 import type { KeyboardDesign } from '../../models/keyboard.types';
 import { COLOR_PRESETS } from '../../models/color-presets';
 import type { PreviewKey } from './keyboard-geometry';
+import type { KeyboardColor } from '../../models/color-palette';
 
 /** Overrides belong to a physical key within its size/layout, not its printed letter. */
 export function keyColorId(design: KeyboardDesign, key: PreviewKey): string {
     return `${design.size}:${design.physical}:${key.row === undefined ? `${key.x}:${key.y}:${key.label}` : `letter:${key.row}:${key.letter}`}`;
 }
-export function keyColor(design: KeyboardDesign, key: PreviewKey): string {
+export function keyColor(design: KeyboardDesign, key: PreviewKey): KeyboardColor {
     const override = design.keyColors[keyColorId(design, key)];
     if (override) return override;
     const preset = design.presetId === 'custom' ? design.customColors : COLOR_PRESETS.find(option => option.id === design.presetId)!;

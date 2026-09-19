@@ -24,7 +24,7 @@ export const KEYBOARD_OPTIONS = {
         { id: 'nl', label: 'Dutch' }, { id: 'he', label: 'Hebrew' }, { id: 'ar', label: 'Arabic' }, { id: 'ru', label: 'Russian' },
     ] satisfies { id: LegendLanguage; label: string }[],
     corners: [{ id: 'top-left', label: 'Top left / bottom right' }, { id: 'top-right', label: 'Top right / bottom left' }] as const,
-    initial: { size: '100', physical: 'ansi', letterLayout: 'qwerty', languages: ['en'], primaryCorner: 'top-left', presetId: 'classic', customColorMode: 2, customColors: { letters: '#e8e2d6', actions: '#899096', accent: '#ee826f' }, keyColors: {} } satisfies KeyboardDesign,
+    initial: { size: '100', physical: 'ansi', letterLayout: 'qwerty', languages: ['en'], primaryCorner: 'top-left', presetId: 'classic', customColorMode: 2, customColors: { letters: '#e8e2d6', actions: '#6f7378', accent: '#b94a48' }, keyColors: {}, keyLegends: {} } satisfies KeyboardDesign,
     previewNote: 'Schematic preview: key counts and punctuation vary by board and national layout. Letter placement here is a custom print preview, not an operating-system keymap.',
 };
 

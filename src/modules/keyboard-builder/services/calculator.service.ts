@@ -12,6 +12,7 @@ export class CalculatorService {
     public calculate(design: KeyboardDesign): KeyboardQuote {
         const keys = keyboardGeometry(design).keys;
         const customized = keys.filter(key => design.keyColors[keyColorId(design, key)] !== undefined).length;
+        const customLegends = keys.filter(key => design.keyLegends[keyColorId(design, key)] !== undefined).length;
         const items: PriceItem[] = [];
         const add = (label: string, quantity: number, unitCents: number) => {
             items.push({ label, quantity, unitCents, totalCents: quantity * unitCents });
@@ -26,6 +27,7 @@ export class CalculatorService {
             add('Additional custom palette colors', design.customColorMode - 1, prices.extraCustomColor);
         }
         add('Individually colored keys', customized, prices.individualKey);
+        add('Custom printed legends', customLegends, prices.customLegend);
         return { items, totalCents: items.reduce((sum, item) => sum + item.totalCents, 0) };
     }
 
