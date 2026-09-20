@@ -7,6 +7,8 @@ export * from './component-scope';
 export * from './lifecycle';
 export * from './scheduler';
 
+export * from './api/api-request';
+
 export * from './events/event-manager';
 export * from './events/pointer-router';
 

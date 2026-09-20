@@ -60,7 +60,12 @@ export class HeaderComponent extends Component<HTMLElement> {
             ]),
             left === this.menuButton ? this.builder.element('nav', {
                 className: 'shared-header__desktop-nav', attributes: { 'aria-label': 'Desktop navigation' },
-            }, [this.builder.element('a', { attributes: { href: '#/builder', ...(window.location.hash === '#/builder' ? { 'aria-current': 'page' } : {}) } }, 'Builder'), this.performanceButton])
+            }, [
+                this.builder.element('a', { attributes: { href: '#/builder', ...(window.location.hash === '#/builder' ? { 'aria-current': 'page' } : {}) } }, 'Builder'),
+                this.builder.element('a', { attributes: { href: '#/account', ...(window.location.hash === '#/account' ? { 'aria-current': 'page' } : {}) } }, 'Account'),
+                this.builder.element('a', { attributes: { href: '#/admin', ...(window.location.hash === '#/admin' ? { 'aria-current': 'page' } : {}) } }, 'Admin'),
+                this.performanceButton,
+            ])
                 : this.builder.element('div'),
             themes,
         ]);

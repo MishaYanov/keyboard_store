@@ -11,7 +11,8 @@ export const SITE_LINKS = [
                 { label: 'Builder', href: '#/builder' },
                 { label: 'Basket', href: '#/checkout' },
                 { label: 'About', href: '#/about' },
-                { label: 'Login', href: '#/login' },
+                { label: 'Account', href: '#/account' },
+                { label: 'Admin', href: '#/admin' },
             ];
 
 /** Shared site copy. Homepage-specific content lives in homepage.maps.ts. */
@@ -31,7 +32,7 @@ export const SITE_CONTENT = {
             title: 'Made personal, one key at a time.',
             links: SITE_LINKS,
             disclaimers: [
-                'This site is a product prototype. Account access, checkout, and manufacturing services are not yet available.',
+                'This site is a product prototype. Authentication, payment, and manufacturing services are not yet connected.',
                 'On-screen colors and previews are illustrative. Final materials, print details, compatibility, pricing, and delivery must be confirmed before ordering.',
                 'Third-party names and trademarks belong to their respective owners. References do not imply affiliation or endorsement.',
             ],

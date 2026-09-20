@@ -4,19 +4,23 @@ import {
 } from './engine';
 import { HomepageWrapper } from './modules/homepage/homepage.wrapper';
 import { AboutWrapper } from './modules/about/about.wrapper';
-import { LoginWrapper } from './modules/login/login.wrapper';
 import { BuilderWrapper } from './modules/keyboard-builder/builder.wrapper';
 import { CheckoutWrapper } from './modules/checkout/checkout.wrapper';
+import { ClientWrapper } from './modules/client/client.wrapper';
+import { AdminWrapper } from './modules/admin/admin.wrapper';
 import { NotFoundWrapper } from './modules/not-found/not-found.wrapper';
 
-export type AppRoute = '' | 'about' | 'login' | 'builder' | 'checkout' | 'not-found';
+export type AppRoute = '' | 'about' | 'login' | 'account' | 'admin' | 'builder' | 'checkout' | 'not-found';
 
 type RouteFactory = (context: ApplicationContext) => Component;
 
 const routes: Readonly<Record<AppRoute, RouteFactory>> = {
     '': context => new HomepageWrapper(context),
     about: context => new AboutWrapper(context),
-    login: context => new LoginWrapper(context),
+    // Keep the old login URL as a compatibility route while authentication is deferred.
+    login: context => new ClientWrapper(context),
+    account: context => new ClientWrapper(context),
+    admin: context => new AdminWrapper(context),
     builder: context => new BuilderWrapper(context),
     checkout: context => new CheckoutWrapper(context),
     'not-found': context => new NotFoundWrapper(context),

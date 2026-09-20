@@ -76,7 +76,7 @@ export const HOMEPAGE_CONTENT = {
                 eyebrow: '03 / Return',
                 title: 'Keep your ideas close.',
                 text: 'Your current design is saved in this browser. Account access will eventually give your designs a permanent home across devices.',
-                link: { label: 'Account access', href: '#/login' },
+                link: { label: 'Open your space', href: '#/account' },
             },
         ],
     },
