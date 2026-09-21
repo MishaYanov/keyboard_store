@@ -1,0 +1,66 @@
+# Use with exactly one environment override and its --env-file.
+services:
+  api:
+    image: ${IMAGE_PREFIX:-keycaps}/api:${RELEASE_TAG:?Set an immutable RELEASE_TAG}
+    build:
+      context: .
+      dockerfile: docker/release.Dockerfile
+      target: api
+    environment:
+      NODE_ENV: production
+      COMMERCE_MODE: ${COMMERCE_MODE:-live}
+      APP_ORIGIN: ${APP_ORIGIN:?Set APP_ORIGIN}
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      API_DATABASE: ${API_DATABASE:-/data/commerce.sqlite}
+      SQLITE_PERSISTENT: "true"
+      API_TRUST_PROXY: "true"
+      API_ADMIN_KEY: ${API_ADMIN_KEY:?Set API_ADMIN_KEY}
+      SHOPIFY_STORE_DOMAIN: ${SHOPIFY_STORE_DOMAIN:-}
+      SHOPIFY_API_VERSION: ${SHOPIFY_API_VERSION:-2026-07}
+      SHOPIFY_CHECKOUT_DOMAIN: ${SHOPIFY_CHECKOUT_DOMAIN:-}
+      SHOPIFY_STOREFRONT_PRIVATE_TOKEN: ${SHOPIFY_STOREFRONT_PRIVATE_TOKEN:-}
+      SHOPIFY_WEBHOOK_SECRET: ${SHOPIFY_WEBHOOK_SECRET:-}
+      SHOPIFY_VARIANT_MAP: ${SHOPIFY_VARIANT_MAP:-}
+    volumes:
+      - sqlite-data:/data
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 20s
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging: &logging
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  web:
+    image: ${IMAGE_PREFIX:-keycaps}/web:${RELEASE_TAG:?Set an immutable RELEASE_TAG}
+    build:
+      context: .
+      dockerfile: docker/release.Dockerfile
+      target: web
+    environment:
+      SITE_ADDRESS: ${APP_ORIGIN:?Set APP_ORIGIN}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+    logging: *logging
+volumes:
+  sqlite-data:
+  # Retained for existing SQLite installations. No service mounts or deletes it.
+  commerce-data:
+  caddy-data:
+  caddy-config:

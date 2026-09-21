@@ -1,0 +1,95 @@
+name: keycaps-dev
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: server
+    command: npm run dev
+    environment:
+      NODE_ENV: development
+      DEPLOY_ENV: development
+      COMMERCE_MODE: mock
+      API_DATABASE: /data/development-mock.sqlite
+      SQLITE_PERSISTENT: "true"
+      APP_ORIGIN: http://127.0.0.1:${DEV_PORT:-5173}
+      DEV_POLLING: "true"
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+    volumes:
+      - sqlite-data:/data
+      - ./server/app.ts:/app/server/app.ts:ro
+      - ./server/start.ts:/app/server/start.ts:ro
+      - ./server/commerce.ts:/app/server/commerce.ts:ro
+      - ./server/config.ts:/app/server/config.ts:ro
+      - ./server/domain.ts:/app/server/domain.ts:ro
+      - ./server/models.ts:/app/server/models.ts:ro
+      - ./server/repository.ts:/app/server/repository.ts:ro
+      - ./server/errors.ts:/app/server/errors.ts:ro
+      - ./server/mock-shopify.ts:/app/server/mock-shopify.ts:ro
+      - ./server/shopify.ts:/app/server/shopify.ts:ro
+      - ./server/store.ts:/app/server/store.ts:ro
+      - ./server/webhooks.ts:/app/server/webhooks.ts:ro
+      - ./shared/src:/app/shared/src:ro
+    init: true
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: client
+    ports:
+      - "127.0.0.1:${DEV_PORT:-5173}:5173"
+    environment:
+      API_PROXY_TARGET: http://api:3001
+      DEV_POLLING: "true"
+    volumes:
+      - ./client/src:/app/client/src:ro
+      - ./client/public:/app/client/public:ro
+      - ./client/index.html:/app/client/index.html:ro
+      - ./client/style.css:/app/client/style.css:ro
+      - ./shared/src:/app/shared/src:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    init: true
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:5173/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  unit:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: unit
+    environment:
+      NODE_ENV: test
+      DEPLOY_ENV: test
+      COMMERCE_MODE: mock
+    init: true
+  e2e:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: docker/e2e.Dockerfile
+    # Browser and Vite share localhost, keeping origins/cookies identical to desktop development.
+    network_mode: service:web
+    environment:
+      CI: "1"
+      BASE_URL: http://localhost:5173
+    depends_on:
+      web:
+        condition: service_healthy
+    volumes:
+      - ./tests/e2e/test-results:/app/tests/e2e/test-results
+      - ./tests/e2e/playwright-report:/app/tests/e2e/playwright-report
+    shm_size: 1gb
+    init: true
+volumes:
+  sqlite-data:

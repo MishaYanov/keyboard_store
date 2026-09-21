@@ -2,15 +2,30 @@
   "name": "canvas-ui",
   "private": true,
   "type": "module",
+  "workspaces": ["client", "server", "shared", "tests"],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "towebp": "node scripts/towebp.js"
+    "docker:staging": "docker compose --env-file deploy/staging/.env -f compose.release.yaml -f compose.staging.yaml up -d --build --wait",
+    "docker:production": "docker compose --env-file deploy/production/.env -f compose.release.yaml -f compose.production.yaml up -d --no-build --wait",
+    "dev": "npm run dev --workspace @keycaps/client",
+    "build": "npm run build --workspace @keycaps/client",
+    "preview": "npm run preview --workspace @keycaps/client",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "towebp": "npm run towebp --workspace @keycaps/client",
+    "api:build": "npm run build --workspace @keycaps/server",
+    "api:start": "npm run start --workspace @keycaps/server",
+    "api:dev": "npm run dev --workspace @keycaps/server",
+    "api:test": "npm run api:build && npm run integration --workspace @keycaps/tests",
+    "test:unit": "npm run unit --workspace @keycaps/tests",
+    "test": "npm run typecheck && npm run test:unit && npm run api:test",
+    "docker:dev": "docker compose up --build web",
+    "docker:test:unit": "docker compose -p keycaps-test -f compose.yaml -f compose.test.yaml --profile test run --build --rm unit",
+    "docker:test:e2e": "docker compose -p keycaps-test -f compose.yaml -f compose.test.yaml --profile test run --build --rm e2e",
+    "docker:test:down": "docker compose -p keycaps-test -f compose.yaml -f compose.test.yaml --profile test down",
+    "docker:down": "docker compose --profile test down",
+    "test:e2e": "npm run api:build && npm run e2e --workspace @keycaps/tests"
   },
+  "engines": { "node": ">=24.0.0" },
   "devDependencies": {
-    "sharp": "^0.35.4",
     "typescript": "^7.0.2",
     "vite": "8.2.2"
   }

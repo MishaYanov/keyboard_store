@@ -1,0 +1,11 @@
+{
+  "name": "@keycaps/tests", "private": true, "type": "module",
+  "scripts": {
+    "unit": "vite build --config vite.config.mjs && node --test dist/*.test.mjs",
+    "integration": "node --test integration/*.test.mjs",
+    "e2e": "playwright test --config e2e/playwright.config.ts",
+    "report": "playwright show-report e2e/playwright-report",
+    "manual": "vite --host 127.0.0.1 --port 5181 --strictPort"
+  },
+  "devDependencies": { "@keycaps/domain": "*", "@playwright/test": "1.63.0", "vite": "8.2.2" }
+}

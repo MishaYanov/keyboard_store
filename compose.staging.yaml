@@ -1,0 +1,12 @@
+name: keycaps-staging
+services:
+  api:
+    environment:
+      DEPLOY_ENV: staging
+      COMMERCE_MODE: ${COMMERCE_MODE:-mock}
+  web:
+    environment:
+      DEPLOY_ENV: staging
+    ports: !override
+      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:80"
+      - "${HTTPS_BIND:-127.0.0.1}:${HTTPS_PORT:-8443}:443"

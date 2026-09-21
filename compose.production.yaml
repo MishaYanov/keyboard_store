@@ -1,0 +1,14 @@
+name: keycaps-production
+services:
+  api:
+    environment:
+      DEPLOY_ENV: production
+      COMMERCE_MODE: live
+      SHOPIFY_STORE_DOMAIN: ${SHOPIFY_STORE_DOMAIN:?Set SHOPIFY_STORE_DOMAIN}
+      SHOPIFY_CHECKOUT_DOMAIN: ${SHOPIFY_CHECKOUT_DOMAIN:?Set SHOPIFY_CHECKOUT_DOMAIN}
+      SHOPIFY_STOREFRONT_PRIVATE_TOKEN: ${SHOPIFY_STOREFRONT_PRIVATE_TOKEN:?Set private token}
+      SHOPIFY_WEBHOOK_SECRET: ${SHOPIFY_WEBHOOK_SECRET:?Set webhook secret}
+      SHOPIFY_VARIANT_MAP: ${SHOPIFY_VARIANT_MAP:?Set variant mapping JSON}
+  web:
+    environment:
+      DEPLOY_ENV: production

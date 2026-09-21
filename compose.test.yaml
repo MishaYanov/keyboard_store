@@ -1,0 +1,14 @@
+# Isolated CI/test stack: no host ports, hot-reload mounts or developer-server interference.
+services:
+  api:
+    environment:
+      APP_ORIGIN: http://localhost:5173
+      NODE_ENV: test
+      DEPLOY_ENV: test
+      API_DATABASE: ':memory:'
+      SQLITE_PERSISTENT: "false"
+    volumes: !reset []
+    command: sh -c "npm run build && node dist/start.js"
+  web:
+    volumes: !reset []
+    ports: !reset []

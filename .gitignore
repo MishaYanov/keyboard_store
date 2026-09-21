@@ -13,4 +13,12 @@ node_modules/
 jspm_packages/
 web_modules/
 dist/
+dist-api/
+dist-tests/
+tests/e2e/test-results/
+tests/e2e/playwright-report/
+data/
+.env
+.env.*
+!.env.example
 .idea

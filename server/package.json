@@ -1,0 +1,23 @@
+{
+  "name": "@keycaps/server",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run typecheck && vite build --config vite.config.mjs",
+    "start": "node --env-file-if-exists=.env dist/start.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@keycaps/domain": "*",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "typescript": "^7.0.2",
+    "vite": "8.2.2"
+  }
+}
