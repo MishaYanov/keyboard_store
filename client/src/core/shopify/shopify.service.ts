@@ -1,6 +1,8 @@
 import { computed, createApiRequest, requestJson, ApiResponseError } from '../../engine';
 import type { ConfigurationItem } from '@keycaps/domain/shopify.adapter';
 import type { ShopifyMoney } from '@keycaps/domain/shopify.types';
+import { CheckoutAttempt } from './checkout-attempt';
+import { availabilitySchema, catalogSchema, checkoutSchema } from '../api-schemas';
 
 export interface CheckoutSession {
     checkoutUrl: string;
@@ -18,20 +20,22 @@ async function api<T>(url: string, init: RequestInit): Promise<T> {
 
 /** Browser-facing adapter. Shopify credentials and price mappings live on the API server. */
 export class ShopifyService {
+    private readonly attempt = new CheckoutAttempt();
     public readonly availability = createApiRequest(async (_, { signal }) =>
-        api<{ configured: boolean; mock?: boolean }>('/api/commerce/status', { signal }));
+        availabilitySchema.parse(await api<unknown>('/api/commerce/status', { signal })));
     public readonly configured = computed(() => this.availability.data.get()?.configured === true);
     public readonly catalog = createApiRequest(async (_, { signal }) =>
-        api<{ variants: Array<{ id: string; title: string; price: ShopifyMoney; availableForSale: boolean }> }>('/api/commerce/catalog', { signal }));
+        catalogSchema.parse(await api<unknown>('/api/commerce/catalog', { signal })));
     public readonly quote = createApiRequest<unknown, readonly ConfigurationItem[]>(async (items, { signal }) =>
         api('/api/commerce/quote', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ items: items.map(({ design, quantity }) => ({ design, quantity })) }) }));
     public readonly checkout = createApiRequest<CheckoutSession, readonly ConfigurationItem[]>(async (items, { signal }) => {
-        const result = await api<CheckoutSession>('/api/commerce/checkout', {
+        const body = JSON.stringify({ items: items.map(({ design, quantity }) => ({ design, quantity })) });
+        const result = checkoutSchema.parse(await api<unknown>('/api/commerce/checkout', {
             method: 'POST', signal,
-            headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
-            body: JSON.stringify({ items: items.map(({ design, quantity }) => ({ design, quantity })) }),
-        });
+            headers: { 'Content-Type': 'application/json', 'Idempotency-Key': this.attempt.forPayload(body) },
+            body,
+        }));
         this.validateUrl(result.checkoutUrl);
         return result;
     });
@@ -48,9 +52,10 @@ export class ShopifyService {
         return url.href;
     }
     public invalidateCheckout(): void { this.checkout.reset(); }
+    /** Explicitly abandon an expired/failed attempt; never automatic on network failure. */
+    public restartCheckout(): void { this.attempt.reset(); this.checkout.reset(); }
     public checkoutUrl(): string | null {
         const result = this.checkout.data.get();
         return result ? this.validateUrl(result.checkoutUrl) : null;
     }
 }
-export const shopifyService = new ShopifyService();

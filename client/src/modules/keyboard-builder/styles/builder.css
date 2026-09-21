@@ -1,4 +1,4 @@
-.keyboard-builder { padding: 6rem clamp(1rem, 4vw, 4rem) 3rem; }
+.keyboard-builder { padding: 6rem clamp(1rem, 4vw, 4rem) 3rem; --builder-compact: 0; --builder-rotated: 0; }
 .builder-back { display: none; }
 .keyboard-engine > p { min-height: 3em; line-height: 1.5; }
 .builder-controls { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; padding: .5rem 0; font-size: .8rem; }
@@ -28,6 +28,7 @@
         display: flex; flex-direction: column; overflow: hidden;
         background: var(--color-page-background); color: var(--color-text-primary);
         --builder-rotated: 0;
+        --builder-compact: 1;
     }
     .keyboard-builder .keyboard-engine { flex: 1; min-height: 0; display: flex; flex-direction: column; }
     .keyboard-builder .builder-back { flex-shrink: 0; }

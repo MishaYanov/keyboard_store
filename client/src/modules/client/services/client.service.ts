@@ -1,5 +1,6 @@
 import type { UserSpaceData, UserSpaceResult } from '../models/client.types';
-import { createApiRequest, requestJson, ApiResponseError } from '../../../engine';
+import { createApiRequest, requestJson } from '../../../engine';
+import { accountSchema } from '../../../core/api-schemas';
 
 const DEMO_USER: UserSpaceData = {
     firstName: 'Keycap enthusiast',
@@ -23,13 +24,9 @@ const DEMO_USER: UserSpaceData = {
 
 /** Backend boundary for the account page. Replace the endpoint without touching the view. */
 export class ClientService {
+    public constructor(private readonly mode: 'live' | 'demo' = 'live') {}
     public readonly overview = createApiRequest<UserSpaceResult>(async (_variables, { signal }) => {
-        try {
-            return { data: await requestJson<UserSpaceData>('/api/account/overview', { signal }), source: 'api' };
-        } catch (error) {
-            if (signal.aborted) throw error;
-            if (error instanceof ApiResponseError && [401, 403].includes(error.status)) throw error;
-            return { data: DEMO_USER, source: 'demo' };
-        }
+        if (this.mode === 'demo') return { data: structuredClone(DEMO_USER), source: 'demo' };
+        return { data: accountSchema.parse(await requestJson<unknown>('/api/account/overview', { signal })), source: 'api' };
     });
 }

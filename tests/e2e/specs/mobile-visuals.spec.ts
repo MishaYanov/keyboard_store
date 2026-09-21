@@ -18,6 +18,28 @@ test('homepage retains blur and puts mobile theme control at the right', async (
     expect(after!.height).toBe(before!.height);
 });
 
+test('rotated builder dropdown stays in the workspace and Escape only closes the picker', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'Custom picker is for the rotated mobile workspace');
+    await page.goto('/#/builder');
+    await page.getByRole('tab', { name: 'Style individual', exact: true }).click();
+    const trigger = page.getByRole('combobox', { name: 'Selected key', exact: true });
+    await trigger.click();
+    const list = page.getByRole('listbox', { name: 'Selected key', exact: true });
+    await expect(list).toBeVisible();
+    expect(await list.evaluate(node => !!node.closest('.keyboard-builder'))).toBe(true);
+    await page.keyboard.press('Escape');
+    await expect(list).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await expect(page.locator('.view-grid__sidebar')).toBeVisible();
+    await trigger.click();
+    const option = list.getByRole('option').nth(1);
+    const text = await option.textContent();
+    await option.click();
+    await expect(trigger).toContainText(text!);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('input[name="key-legend"]')).toBeVisible();
+});
+
 test('builder uses readable texture fonts and balanced mobile settings', async ({ page, isMobile }) => {
     await page.addInitScript(() => {
         const original = CanvasRenderingContext2D.prototype.fillText;
@@ -44,7 +66,34 @@ test('builder uses readable texture fonts and balanced mobile settings', async (
         const positions = await options.evaluateAll(nodes => nodes.slice(0, 2).map(node => ({
             left: (node as HTMLElement).offsetLeft, top: (node as HTMLElement).offsetTop,
         })));
-        expect(positions[0]!.top).toBe(positions[1]!.top);
-        expect(positions[0]!.left).not.toBe(positions[1]!.left);
+        expect(positions[0]!.top).toBeLessThan(positions[1]!.top);
+        expect(positions[0]!.left).toBe(positions[1]!.left);
+    }
+});
+
+test('mobile select dialogs stay replaced in portrait and landscape for both fields', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'Touch-device picker regression');
+    await page.goto('/#/builder');
+    for (const viewport of [{ width: 390, height: 844 }, { width: 844, height: 390 }]) {
+        await page.setViewportSize(viewport);
+        await page.getByRole('tab', { name: 'Style individual', exact: true }).click();
+        await expect(page.locator('select[name="selected-key"]')).toBeHidden();
+        const key = page.getByRole('combobox', { name: 'Selected key', exact: true });
+        await expect(key).toHaveJSProperty('tagName', 'BUTTON');
+        await key.click();
+        await page.getByRole('listbox').getByRole('option').nth(1).click();
+        await expect(page.locator('input[name="key-legend"]')).toBeVisible();
+
+        await page.getByRole('tab', { name: 'Languages', exact: true }).click();
+        if (viewport.width === 390) await page.getByRole('button', { name: 'Choose languages →', exact: true }).click();
+        await expect(page.locator('select[name="corner"]')).toBeHidden();
+        const corner = page.getByRole('combobox', { name: '3. Legend placement', exact: true });
+        await expect(corner).toHaveJSProperty('tagName', 'BUTTON');
+        await corner.click();
+        const option = page.getByRole('listbox').getByRole('option').last();
+        const label = await option.textContent();
+        await option.click();
+        await expect(corner).toContainText(label!);
+        await expect(corner).toHaveAttribute('aria-expanded', 'false');
     }
 });

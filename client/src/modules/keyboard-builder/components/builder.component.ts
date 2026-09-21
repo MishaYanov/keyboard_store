@@ -3,12 +3,13 @@ import {EngineWrapperComponent} from './keyboard-interactive-engine/engine-wrapp
 import {BUILDER_CONTENT} from '../models/builder.maps';
 import '../styles/builder.css';
 import { activeColorAdjustments } from '../../../shared/accessibility/accessibility.service';
+import type { AppServices } from '../../../core/app-services';
 
 export class BuilderComponent extends Component<HTMLElement> {
     private readonly workspace: EngineWrapperComponent;
     private readonly colorWarning: HTMLParagraphElement;
 
-    public constructor(context: ApplicationContext) {
+    public constructor(context: ApplicationContext, services: AppServices) {
         super(document.createElement('article'));
         this.root.className = 'keyboard-builder';
         this.colorWarning = this.builder.element('p', {
@@ -28,7 +29,7 @@ export class BuilderComponent extends Component<HTMLElement> {
             ),
             this.colorWarning,
         );
-        this.workspace = new EngineWrapperComponent(context);
+        this.workspace = new EngineWrapperComponent(context, services);
     }
 
     protected override onMount(): void {

@@ -2,27 +2,30 @@ import { signal, type ReadonlySignal } from '../../../engine';
 import { KEYBOARD_OPTIONS } from '@keycaps/domain/keyboard-options';
 import type { KeyboardDesign, KeyboardSize, PhysicalLayout, LetterLayout, LegendLanguage } from '@keycaps/domain/keyboard.types';
 import { normalizeKeyboardDesign } from '@keycaps/domain/keyboard-design.validation';
-import { readLocalValue, writeLocalValue } from '../../../shared/storage/local-storage';
+import { browserStorage, type JsonStorage } from '../../../shared/storage/json-storage';
 import { isKeyboardColor, type KeyboardColor } from '@keycaps/domain/color-palette';
 
 export const KEYBOARD_STORAGE_KEY = 'custom-keycaps:keyboard:v1';
 
-function restoreDesign(): KeyboardDesign {
-    const saved = readLocalValue(KEYBOARD_STORAGE_KEY);
+function restoreDesign(storage: JsonStorage): KeyboardDesign {
+    const saved = storage.read(KEYBOARD_STORAGE_KEY);
     return normalizeKeyboardDesign(saved) ?? structuredClone(KEYBOARD_OPTIONS.initial);
 }
 
 export class KeyboardDesignService {
     private readonly selected = signal<string | null>(null);
     public readonly selectedKey: ReadonlySignal<string | null> = this.selected;
-    private readonly state = signal<KeyboardDesign>(restoreDesign());
+    private readonly state = signal<KeyboardDesign>(structuredClone(KEYBOARD_OPTIONS.initial));
     private readonly saved = signal(true);
     public readonly storageAvailable: ReadonlySignal<boolean> = this.saved;
     public readonly design: ReadonlySignal<KeyboardDesign> = this.state;
+    public constructor(private readonly storage: JsonStorage = browserStorage) {
+        this.state.set(restoreDesign(storage));
+    }
     private update(change: (state: KeyboardDesign) => KeyboardDesign): void {
         const next = change(this.state.get());
         this.state.set(next);
-        this.saved.set(writeLocalValue(KEYBOARD_STORAGE_KEY, next));
+        this.saved.set(this.storage.write(KEYBOARD_STORAGE_KEY, next));
     }
     public setSize(size: KeyboardSize): void { this.selected.set(null); this.update(state => ({ ...state, size })); }
     public setPhysical(physical: PhysicalLayout): void { this.selected.set(null); this.update(state => ({ ...state, physical })); }

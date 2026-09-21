@@ -11,10 +11,10 @@ The Node API in `server/` validates designs, owns pricing mappings, stores immut
 design approvals, creates hosted checkouts and verifies paid-order webhooks.
 See [server setup and endpoint documentation](../../../../server/README.md).
 
-`ShopifyAdapter.pricingKey` in `@keycaps/domain` is shared with server validation. The older public
-Storefront provider remains a standalone transport utility, but is not imported
-or used by the application. Never wire that utility into custom checkout to bypass
-the server's approval flow. `SHOPIFY_*` values in the ignored `server/.env` are
+`ShopifyAdapter.pricingKey` in `@keycaps/domain` is shared with server validation.
+The unused direct Storefront transport and browser configuration were removed;
+custom checkout always goes through the server's approval flow.
+`SHOPIFY_*` values in the ignored `server/.env` are
 server-only. No `VITE_SHOPIFY_*` configuration is needed.
 
 The basket is retained until confirmed order handling is implemented. Card details,

@@ -1,5 +1,6 @@
 import { bootstrapApplication } from './engine';
 import { Router } from './router';
+import { createAppServices } from './core/app-services';
 
 /**
  * Browser entry point.
@@ -9,5 +10,5 @@ import { Router } from './router';
  */
 export const application = bootstrapApplication(
     '#app',
-    context => new Router(context),
+    context => new Router(context, createAppServices()),
 );

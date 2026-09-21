@@ -65,7 +65,12 @@ test('failed checkout preserves basket and can be retried', async ({ page }) => 
 test('individual legend and palette affect approved checkout price', async ({ page }) => {
     await page.goto('/#/builder');
     await page.getByRole('tab', { name: 'Style individual', exact: true }).click();
-    await page.getByRole('combobox', { name: 'Selected key', exact: true }).selectOption({ index: 1 });
+    const select = page.getByRole('combobox', { name: 'Selected key', exact: true });
+    if (await select.evaluate(element => element.tagName === 'SELECT')) await select.selectOption({ index: 1 });
+    else {
+        await select.click();
+        await page.getByRole('option').nth(1).click();
+    }
     await page.locator('input[name="key-color"][value="#b94a48"]').check();
     await page.locator('input[name="key-legend"]').fill('Launch');
     await page.getByRole('button', { name: 'Apply text', exact: true }).click();

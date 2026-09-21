@@ -8,7 +8,9 @@ import { KeyboardSettingsView } from './keyboard-settings.view';
 import type { LanguageStep } from '../../models/settings.maps';
 import { KEYBOARD_OPTIONS } from '@keycaps/domain/keyboard-options';
 import { KeyboardDesignService } from '../../services/keyboard-design.service';
-import { checkoutService } from '../../../checkout/services/checkout.service';
+import type { AppServices } from '../../../../core/app-services';
+import { BuilderController } from '../../services/builder-controller';
+import { builderLayout } from '../../services/builder-layout';
 import type { KeyboardDesign, KeyboardSize, PhysicalLayout, LetterLayout, LegendLanguage } from '@keycaps/domain/keyboard.types';
 import '../../styles/keyboard-settings.css';
 import { builderCommand, isEditing, moveSidebar } from '../../services/builder-shortcuts';
@@ -18,7 +20,8 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
     private readonly viewStatus: HTMLParagraphElement;
     private readonly panel: HTMLDivElement;
     private readonly settings: KeyboardSettingsView;
-    private readonly service = new KeyboardDesignService();
+    private readonly controller: BuilderController;
+    private get service(): KeyboardDesignService { return this.controller.design; }
     private activeView = 'keyboard-size';
     private languageStep: LanguageStep = 'layout';
     private framing = '';
@@ -27,8 +30,9 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
     private readonly keyboardEnabled = this.builder.element('input', { attributes: { type: 'checkbox' }, properties: { checked: true } });
     private returnFocus: HTMLElement | null = null;
 
-    public constructor(private readonly context: ApplicationContext) {
+    public constructor(private readonly context: ApplicationContext, services: AppServices) {
         super(document.createElement('section'));
+        this.controller = new BuilderController(services);
         this.root.className = 'keyboard-engine';
         this.root.tabIndex = 0;
         this.root.setAttribute('aria-label', 'Keyboard builder workspace');
@@ -45,6 +49,7 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
         this.grid = new GridComponent(context, {
             className: 'keyboard-builder-grid',
             resizablePanel: true,
+            layout: builderLayout(this.root),
             label: BUILDER_CONTENT.gridLabel,
             initialArea: BUILDER_CONTENT.initialArea,
             columns: BUILDER_CONTENT.columns.map(column => ({
@@ -106,7 +111,7 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
                 if (command.type === 'help') openMap();
                 if (command.type === 'focus') moveSidebar(this.panel, 'ArrowDown');
                 if (command.type === 'close') { this.grid.setPanel(null); this.root.focus({ preventScroll: true }); }
-                if (command.type === 'basket') window.location.hash = '#/checkout';
+                if (command.type === 'basket') this.controller.openBasket();
                 if (command.type === 'add') this.panel.querySelector<HTMLButtonElement>('[data-action="add-to-basket"]')?.click();
                 return;
             }
@@ -144,8 +149,7 @@ export class EngineWrapperComponent extends Component<HTMLElement> {
             }
             const action = target.closest<HTMLElement>('[data-action]')?.dataset.action;
             if (action === 'add-to-basket') {
-                checkoutService.addConfiguration(this.service.design.get(), this.grid.captureSnapshot());
-                window.location.hash = '#/checkout';
+                this.controller.addToBasket(this.grid.captureSnapshot());
                 return;
             }
             if (action === 'apply-legend') {

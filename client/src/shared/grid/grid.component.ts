@@ -116,8 +116,7 @@ export class GridComponent extends Component<HTMLElement> {
     }
 
     private defaultPanelWidth(): number {
-        const mobile = window.matchMedia('(max-width: 768px), (max-height: 500px) and (pointer: coarse)').matches;
-        return mobile ? (this.body.clientWidth - 20) * .5 : Math.min(352, this.body.clientWidth * .5);
+        return this.config.layout?.defaultPanelWidth(this.body.clientWidth) ?? Math.min(352, this.body.clientWidth * .5);
     }
 
     private setupPanelResize(): void {
@@ -139,7 +138,7 @@ export class GridComponent extends Component<HTMLElement> {
             event.preventDefault();
             this.resizeHandle.focus({ preventScroll: true });
             pointer = event.pointerId;
-            rotated = getComputedStyle(this.root).getPropertyValue('--builder-rotated').trim() === '1';
+            rotated = this.config.layout?.rotated() ?? false;
             startPosition = rotated ? event.clientY : event.clientX;
             // offsetWidth stays in layout coordinates when the mobile builder is rotated.
             startWidth = this.sidebar.offsetWidth;
@@ -159,7 +158,7 @@ export class GridComponent extends Component<HTMLElement> {
             const { min, max } = this.panelBounds();
             const step = event.shiftKey ? 50 : 10;
             const width = this.panelWidth ?? this.sidebar.offsetWidth;
-            const isRotated = getComputedStyle(this.root).getPropertyValue('--builder-rotated').trim() === '1';
+            const isRotated = this.config.layout?.rotated() ?? false;
             const grow = isRotated ? 'ArrowUp' : 'ArrowLeft';
             const shrink = isRotated ? 'ArrowDown' : 'ArrowRight';
             const next = event.key === grow ? width + step : event.key === shrink ? width - step : event.key === 'Home' ? min : event.key === 'End' ? max : null;
@@ -170,7 +169,7 @@ export class GridComponent extends Component<HTMLElement> {
             stop();
             // Re-establish the split when orientation or viewport size changes.
             this.updatePanelWidth(this.defaultPanelWidth());
-            const isRotated = getComputedStyle(this.root).getPropertyValue('--builder-rotated').trim() === '1';
+            const isRotated = this.config.layout?.rotated() ?? false;
             this.resizeHandle.setAttribute('aria-orientation', isRotated ? 'horizontal' : 'vertical');
             this.resizeHandle.style.cursor = isRotated ? 'row-resize' : 'col-resize';
         });

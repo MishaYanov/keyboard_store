@@ -40,7 +40,13 @@ test('legend typing, native controls, shortcut opt-out and key-map button', asyn
     await page.keyboard.press('f');
     const select = page.getByRole('combobox', { name: 'Selected key', exact: true });
     await expect(select).toBeFocused();
-    await select.selectOption({ index: 1 });
+    if (await select.evaluate(element => element.tagName === 'SELECT')) await select.selectOption({ index: 1 });
+    else {
+        await select.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+        await expect(select).toBeFocused();
+    }
     const legend = page.locator('input[name="key-legend"]');
     await legend.fill('');
     await legend.pressSequentially('1234567abf?');

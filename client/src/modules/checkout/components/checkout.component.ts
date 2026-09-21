@@ -1,6 +1,5 @@
 import { Component, effect, type ApplicationContext } from '../../../engine';
-import { checkoutService as checkout } from '../services/checkout.service';
-import { shopifyService as shopify } from '../../../core/shopify/shopify.service';
+import type { AppServices } from '../../../core/app-services';
 import '../styles/checkout.css';
 
 export class CheckoutComponent extends Component<HTMLElement> {
@@ -9,8 +8,9 @@ export class CheckoutComponent extends Component<HTMLElement> {
     private readonly storageStatus = this.builder.element('p', { attributes: { role: 'status' } });
     private readonly pay = this.builder.element('button', { attributes: { type: 'button' } }, 'Continue to secure checkout');
     private readonly paymentStatus = this.builder.element('p', { attributes: { role: 'status' } });
+    private readonly restart = this.builder.element('button', { attributes: { type: 'button', hidden: true } }, 'Start a new checkout attempt');
 
-    public constructor(private readonly context: ApplicationContext) {
+    public constructor(private readonly context: ApplicationContext, private readonly services: AppServices) {
         super(document.createElement('article'));
         this.root.className = 'checkout';
         this.root.append(
@@ -18,11 +18,13 @@ export class CheckoutComponent extends Component<HTMLElement> {
             this.builder.element('a', { attributes: { href: '#/builder' } }, 'Build another keyboard'),
             this.items, this.total, this.storageStatus,
             this.builder.element('p', {}, 'Estimated prices in USD. Final prices, shipping and taxes are confirmed at checkout.'),
-            this.pay, this.paymentStatus,
+            this.pay, this.paymentStatus, this.restart,
         );
     }
 
     protected override onMount(): void {
+        const { basket: checkout, commerce: shopify } = this.services;
+        this.context.eventManager.on(this.scope, this.restart, 'click', () => shopify.restartCheckout());
         shopify.invalidateCheckout();
         void shopify.availability.execute().catch(() => { /* Availability state is shown below. */ });
         this.context.eventManager.on(this.scope, this.pay, 'click', () => {
@@ -36,6 +38,7 @@ export class CheckoutComponent extends Component<HTMLElement> {
         });
         this.registerCleanup(effect(() => {
             const loading = shopify.checkout.loading.get();
+            this.restart.hidden = loading || !shopify.checkout.error.get();
             this.pay.disabled = loading || !checkout.basket.get().length || !shopify.configured.get();
             this.pay.textContent = loading ? 'Preparing checkout…' : 'Continue to secure checkout';
             this.paymentStatus.textContent = shopify.checkout.error.get()?.message
@@ -61,6 +64,7 @@ export class CheckoutComponent extends Component<HTMLElement> {
     }
 
     private renderBasket(): void {
+        const checkout = this.services.basket;
         const focused = document.activeElement;
         const focusedId = focused instanceof HTMLInputElement ? focused.dataset.item : undefined;
         const basket = checkout.basket.get();

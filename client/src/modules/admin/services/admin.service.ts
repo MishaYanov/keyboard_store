@@ -1,5 +1,6 @@
 import type { AdminDashboardData, AdminDashboardResult } from '../models/admin.types';
-import { createApiRequest, requestJson, ApiResponseError } from '../../../engine';
+import { createApiRequest, requestJson } from '../../../engine';
+import { dashboardSchema } from '../../../core/api-schemas';
 
 const DEMO_DASHBOARD: AdminDashboardData = {
     updatedAt: new Date().toISOString(),
@@ -34,13 +35,9 @@ const DEMO_DASHBOARD: AdminDashboardData = {
 
 /** Typed gateway for the future admin backend. */
 export class AdminService {
+    public constructor(private readonly mode: 'live' | 'demo' = 'live') {}
     public readonly dashboard = createApiRequest<AdminDashboardResult>(async (_variables, { signal }) => {
-        try {
-            return { data: await requestJson<AdminDashboardData>('/api/admin/dashboard', { signal }), source: 'api' };
-        } catch (error) {
-            if (signal.aborted) throw error;
-            if (error instanceof ApiResponseError && [401, 403].includes(error.status)) throw error;
-            return { data: DEMO_DASHBOARD, source: 'demo' };
-        }
+        if (this.mode === 'demo') return { data: structuredClone(DEMO_DASHBOARD), source: 'demo' };
+        return { data: dashboardSchema.parse(await requestJson<unknown>('/api/admin/dashboard', { signal })), source: 'api' };
     });
 }

@@ -38,7 +38,7 @@ export class GridCanvasComponent extends WebGlComponent {
             if (event.button !== 0 || !this.config.scene.pointer) return;
             const bounds = this.root.getBoundingClientRect();
             if (bounds.width <= 0 || bounds.height <= 0) return;
-            const rotated = getComputedStyle(this.root).getPropertyValue('--builder-rotated').trim() === '1';
+            const rotated = this.config.layout?.rotated() ?? false;
             const x = rotated ? (event.clientY - bounds.top) / bounds.height : (event.clientX - bounds.left) / bounds.width;
             const y = rotated ? (bounds.right - event.clientX) / bounds.width : (event.clientY - bounds.top) / bounds.height;
             const area = fitGridArea(this.area, this.root.clientWidth, this.root.clientHeight);

@@ -2,14 +2,14 @@ import { signal, type ReadonlySignal } from '../../../engine';
 import type { KeyboardDesign } from '@keycaps/domain/keyboard.types';
 import { CalculatorService } from '@keycaps/domain/calculator.service';
 import { isRecord, normalizeKeyboardDesign } from '@keycaps/domain/keyboard-design.validation';
-import { readLocalValue, writeLocalValue } from '../../../shared/storage/local-storage';
+import { browserStorage, type JsonStorage } from '../../../shared/storage/json-storage';
 
 export const BASKET_STORAGE_KEY = 'custom-keycaps:basket:v1';
 
 export interface BasketItem { readonly id: string; readonly design: KeyboardDesign; readonly quantity: number; readonly snapshot: string | null }
 
-function restoreBasket(): BasketItem[] {
-    const saved = readLocalValue(BASKET_STORAGE_KEY);
+function restoreBasket(storage: JsonStorage): BasketItem[] {
+    const saved = storage.read(BASKET_STORAGE_KEY);
     if (!Array.isArray(saved)) return [];
     const ids = new Set<string>();
     const basket: BasketItem[] = [];
@@ -28,16 +28,19 @@ function restoreBasket(): BasketItem[] {
 
 /** Browser-persisted basket; configurations are copied when submitted. */
 export class CheckoutService {
-    private readonly state = signal<readonly BasketItem[]>(restoreBasket());
+    private readonly state = signal<readonly BasketItem[]>([]);
     private readonly saved = signal(true);
     public readonly storageAvailable: ReadonlySignal<boolean> = this.saved;
     public readonly basket: ReadonlySignal<readonly BasketItem[]> = this.state;
     public readonly calculator = new CalculatorService();
+    public constructor(private readonly storage: JsonStorage = browserStorage) {
+        this.state.set(restoreBasket(storage));
+    }
 
     private update(change: (items: readonly BasketItem[]) => readonly BasketItem[]): void {
         const next = change(this.state.get());
         this.state.set(next);
-        this.saved.set(writeLocalValue(BASKET_STORAGE_KEY, next));
+        this.saved.set(this.storage.write(BASKET_STORAGE_KEY, next));
     }
 
     public addConfiguration(design: KeyboardDesign, snapshot: string | null = null): void {
@@ -54,5 +57,3 @@ export class CheckoutService {
         return this.basket.get().reduce((sum, item) => sum + this.calculator.calculate(item.design).totalCents * item.quantity, 0);
     }
 }
-
-export const checkoutService = new CheckoutService();

@@ -22,6 +22,11 @@ export interface IGridStructure {
     moveDuration?: number;
     className?: string;
     resizablePanel?: boolean;
+    /** Layout policy supplied by the feature using this generic grid. */
+    layout?: {
+        rotated(): boolean;
+        defaultPanelWidth(width: number): number;
+    };
     scene: {
         snapshot?: (context: WebGL2RenderingContext) => string;
         pointer?: (point: { x: number; y: number }) => void;

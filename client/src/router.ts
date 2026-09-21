@@ -9,10 +9,11 @@ import { CheckoutWrapper } from './modules/checkout/checkout.wrapper';
 import { ClientWrapper } from './modules/client/client.wrapper';
 import { AdminWrapper } from './modules/admin/admin.wrapper';
 import { NotFoundWrapper } from './modules/not-found/not-found.wrapper';
+import type { AppServices } from './core/app-services';
 
 export type AppRoute = '' | 'about' | 'login' | 'account' | 'admin' | 'builder' | 'checkout' | 'not-found';
 
-type RouteFactory = (context: ApplicationContext) => Component;
+type RouteFactory = (context: ApplicationContext, services: AppServices) => Component;
 
 const routes: Readonly<Record<AppRoute, RouteFactory>> = {
     '': context => new HomepageWrapper(context),
@@ -21,8 +22,8 @@ const routes: Readonly<Record<AppRoute, RouteFactory>> = {
     login: context => new ClientWrapper(context),
     account: context => new ClientWrapper(context),
     admin: context => new AdminWrapper(context),
-    builder: context => new BuilderWrapper(context),
-    checkout: context => new CheckoutWrapper(context),
+    builder: (context, services) => new BuilderWrapper(context, services),
+    checkout: (context, services) => new CheckoutWrapper(context, services),
     'not-found': context => new NotFoundWrapper(context),
 };
 
@@ -34,7 +35,7 @@ export class Router extends Component {
     private activeRoute: AppRoute | null = null;
     private activeWrapper: Component | null = null;
 
-    public constructor(context: ApplicationContext) {
+    public constructor(context: ApplicationContext, private readonly services: AppServices) {
         const root = document.createElement('div');
 
         root.className = 'router-view';
@@ -57,7 +58,7 @@ export class Router extends Component {
 
         const createWrapper = routes[route];
         const previousWrapper = this.activeWrapper;
-        const nextWrapper = createWrapper(this.context);
+        const nextWrapper = createWrapper(this.context, this.services);
 
         // Mount first so a failed route cannot remove the currently visible
         // module. attach() also makes the Router own the new wrapper.
