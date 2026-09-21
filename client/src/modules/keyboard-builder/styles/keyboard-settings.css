@@ -34,3 +34,15 @@
 .keyboard-settings__price dt { overflow-wrap: anywhere; }
 .keyboard-settings [data-action="add-to-basket"] { min-height: 44px; font-weight: 600; margin-inline-end: 1rem; }
 .keyboard-settings a { color: inherit; }
+
+@media (max-width: 768px), (max-height: 500px) and (pointer: coarse) {
+    .keyboard-settings { padding: .75rem; }
+    .keyboard-settings fieldset {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .5rem;
+    }
+    .keyboard-settings fieldset > :not(.keyboard-settings__option) { grid-column: 1 / -1; }
+    .keyboard-settings__option { min-width: 0; margin: 0; padding: .6rem; overflow-wrap: anywhere; }
+    .keyboard-settings__option small { font-size: .7rem; }
+}

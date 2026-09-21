@@ -38,6 +38,15 @@ export function createKeyboardScene(getDesign: () => KeyboardDesign, getSelected
         const unit = 72;
         surface.width = Math.ceil(width * unit); surface.height = Math.ceil(height * unit);
         paint.scale(unit, unit);
+        // Safari can omit glyphs at subpixel font sizes even with a scaled CTM.
+        // Draw text in actual texture pixels while preserving key-space geometry.
+        const text = (value: string, x: number, y: number, size: number, maxWidth: number) => {
+            paint.save();
+            paint.scale(1 / unit, 1 / unit);
+            paint.font = `500 ${size * unit}px "Geist Mono", monospace`;
+            paint.fillText(value, x * unit, y * unit, maxWidth * unit);
+            paint.restore();
+        };
         paint.fillStyle = '#1e2636'; paint.fillRect(0, 0, width, height);
         for (const key of geometry.keys) {
             const id = keyColorId(design, key);
@@ -55,18 +64,17 @@ export function createKeyboardScene(getDesign: () => KeyboardDesign, getSelected
             paint.fillStyle = legendColor(background);
             const customLegend = design.keyLegends[id];
             if (customLegend) {
-                paint.textAlign = 'center'; paint.textBaseline = 'middle'; paint.font = '500 0.21px "Geist Mono", sans-serif';
-                paint.fillText(customLegend, x+w/2, y+h/2, w-0.16);
+                paint.textAlign = 'center'; paint.textBaseline = 'middle';
+                text(customLegend, x+w/2, y+h/2, .21, w-.16);
             } else if (key.row !== undefined) {
                 design.languages.forEach((language, index) => {
                     const left = index === 0 ? design.primaryCorner === 'top-left' : design.primaryCorner !== 'top-left';
                     paint.textAlign = left ? 'left' : 'right'; paint.textBaseline = index === 0 ? 'top' : 'bottom';
-                    paint.font = '500 0.26px "Geist Mono", sans-serif';
-                    paint.fillText(keyLegend(key, language), left ? x+0.1 : x+w-0.1, index === 0 ? y+0.1 : y+h-0.1, w-0.2);
+                    text(keyLegend(key, language), left ? x+.1 : x+w-.1, index === 0 ? y+.1 : y+h-.1, .26, w-.2);
                 });
             } else {
-                paint.textAlign = 'center'; paint.textBaseline = 'middle'; paint.font = '500 0.19px "Geist Mono", sans-serif';
-                paint.fillText(key.label, x+w/2, y+h/2, w-0.12);
+                paint.textAlign = 'center'; paint.textBaseline = 'middle';
+                text(key.label, x+w/2, y+h/2, .19, w-.12);
             }
         }
         gl.bindTexture(gl.TEXTURE_2D, texture);

@@ -196,6 +196,8 @@ export abstract class WebGlComponent
             this.refreshViewport();
         });
         this.resizeObserver.observe(container);
+        // Fixed canvases can resize independently of their page container.
+        this.resizeObserver.observe(this.root);
         this.refreshViewport();
     }
 

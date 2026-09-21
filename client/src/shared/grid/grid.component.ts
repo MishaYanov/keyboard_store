@@ -104,7 +104,7 @@ export class GridComponent extends Component<HTMLElement> {
         return { min: Math.min(220, max), max };
     }
 
-    private updatePanelWidth(requested = this.panelWidth ?? Math.min(352, this.body.clientWidth * .5)): void {
+    private updatePanelWidth(requested = this.panelWidth ?? this.defaultPanelWidth()): void {
         if (this.body.clientWidth === 0) return;
         const { min, max } = this.panelBounds();
         this.panelWidth = Math.round(Math.max(min, Math.min(max, requested)));
@@ -113,6 +113,11 @@ export class GridComponent extends Component<HTMLElement> {
         this.resizeHandle.setAttribute('aria-valuemax', String(Math.floor(max)));
         this.resizeHandle.setAttribute('aria-valuenow', String(this.panelWidth));
         this.resizeHandle.setAttribute('aria-valuetext', `${this.panelWidth} pixels wide`);
+    }
+
+    private defaultPanelWidth(): number {
+        const mobile = window.matchMedia('(max-width: 768px), (max-height: 500px) and (pointer: coarse)').matches;
+        return mobile ? (this.body.clientWidth - 20) * .5 : Math.min(352, this.body.clientWidth * .5);
     }
 
     private setupPanelResize(): void {
@@ -163,7 +168,8 @@ export class GridComponent extends Component<HTMLElement> {
         window.addEventListener('blur', stop, options);
         const observer = new ResizeObserver(() => {
             stop();
-            this.updatePanelWidth();
+            // Re-establish the split when orientation or viewport size changes.
+            this.updatePanelWidth(this.defaultPanelWidth());
             const isRotated = getComputedStyle(this.root).getPropertyValue('--builder-rotated').trim() === '1';
             this.resizeHandle.setAttribute('aria-orientation', isRotated ? 'horizontal' : 'vertical');
             this.resizeHandle.style.cursor = isRotated ? 'row-resize' : 'col-resize';

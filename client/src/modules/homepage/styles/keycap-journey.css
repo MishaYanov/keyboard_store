@@ -3,7 +3,8 @@
         position: fixed;
         inset: 0;
         width: 100%;
-        height: 100dvh;
+        /* Stable while mobile browser chrome expands/collapses during scrolling. */
+        height: 100lvh;
         z-index: 3;
         pointer-events: none;
         filter: var(--a11y-color-filter, none) var(--a11y-contrast-filter, none);

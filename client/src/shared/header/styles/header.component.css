@@ -6,7 +6,7 @@
         width: 100%;
         z-index: 20;
         color: var(--color-text-primary);
-        background: transparent;
+        background: color-mix(in srgb, var(--color-page-background) 35%, transparent);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
     }
@@ -76,6 +76,8 @@
 
     .shared-header__themes {
         display: flex;
+        grid-column: 3;
+        justify-self: end;
         align-items: center;
         gap: 0.5rem;
     }

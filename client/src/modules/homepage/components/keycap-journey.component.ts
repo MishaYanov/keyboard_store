@@ -248,12 +248,12 @@ export class KeycapJourneyComponent extends WebGlComponent {
             this.docked = true;
             this.trail = [];
         } else {
-            // Wide side-to-side arcs on desktop; a narrow right-hand path on mobile.
-            const stops = [0.82, 0.90, 0.10, 0.90, 0.88];
+            // Keep mobile arcs inside the viewport, rather than pinning to its edge.
+            const stops = mobile ? [.67, .76, .24, .72, .5] : [.82, .90, .10, .90, .88];
             const step = Math.min(3.999, progress*4);
             const index = Math.floor(step);
             const heroExit = ease(window.scrollY / Math.max(hero.height*.7, 1));
-            const x = mobile ? mix(width*.67, width-.65*68, heroExit) : width*mix(stops[index]!, stops[index+1]!, ease(step-index));
+            const x = width*mix(stops[index]!, stops[index+1]!, ease(step-index));
             const y = height*(mobile ? .73 : .60) + Math.sin(progress*Math.PI*2)*height*.055;
             const flightScale = mobile ? mix(Math.min(64, width*.16), 32, heroExit) : mix(Math.min(125, width*.095), 50, heroExit);
             scale = mix(flightScale, landingScale, align);
